@@ -1,7 +1,13 @@
 import * as React from "react";
 import helix, { Helix } from "helix-js";
 import renderer from "helix-js/lib/renderers/react";
-import { Settings, getSettings, setSetting, App } from "./settings";
+import {
+  Settings,
+  getSettings,
+  setSetting,
+  App,
+  setupSettings
+} from "./settings";
 
 interface State {
   settings: null | Settings;
@@ -17,30 +23,32 @@ interface Effects {
 
 type Actions = Helix.Actions<Reducers, Effects>;
 
-const model: Helix.Model<State, Reducers, Effects> = {
-  state: {
-    settings: null
-  },
-  reducers: {
-    storeSettings: (state, settings) => ({ ...state, settings })
-  },
-  effects: {
-    syncSettings(_state, actions) {
-      getSettings().then(actions.syncSettings);
+function model(settings: Settings): Helix.Model<State, Reducers, Effects> {
+  return {
+    state: {
+      settings
     },
-    addApp(state, actions) {
-      const app: App = {
-        url: window.location.origin
-      };
-      const apps = [...state.settings.apps, app];
-      setSetting("apps", apps).then(actions.syncSettings);
+    reducers: {
+      storeSettings: (state, settings) => ({ ...state, settings })
     },
-    removeApp(state, actions, app) {
-      const apps = state.settings.apps.filter(({ url }) => url !== app.url);
-      setSetting("apps", apps).then(actions.syncSettings);
+    effects: {
+      syncSettings(_state, actions) {
+        getSettings().then(actions.syncSettings);
+      },
+      addApp(state, actions) {
+        const app: App = {
+          url: window.location.origin
+        };
+        const apps = [...state.settings.apps, app];
+        setSetting("apps", apps).then(actions.syncSettings);
+      },
+      removeApp(state, actions, app) {
+        const apps = state.settings.apps.filter(({ url }) => url !== app.url);
+        setSetting("apps", apps).then(actions.syncSettings);
+      }
     }
-  }
-};
+  };
+}
 
 const component: Helix.Component<State, Actions> = (state, _, actions) => {
   const appIsEnabled =
@@ -70,10 +78,10 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
 const mount = document.createElement("div");
 document.body.appendChild(mount);
 
-const app = helix<State, Actions>({
-  model,
-  component,
-  render: renderer(mount)
+setupSettings().then(settings => {
+  helix<State, Actions>({
+    model: model(settings),
+    component,
+    render: renderer(mount)
+  });
 });
-
-app.actions.syncSettings();
