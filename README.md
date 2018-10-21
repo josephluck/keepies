@@ -8,7 +8,7 @@ The name keepie refers to "keep" and "keepie uppie" and functions as the termino
 
 At the time of writing, it's unclear whether the functionality detailed below is even possible.
 
-## Core functionality
+### Core functionality
 
 - Capture - Captures screenshots of a URL periodically
 - Apps - Ability to set up "apps" which instruct the extension to name files appropriately
