@@ -8,6 +8,8 @@ The name keepie refers to "keep" and "keepie uppie" and functions as the termino
 
 At the time of writing, it's unclear whether the functionality detailed below is even possible.
 
+https://developer.chrome.com/extensions/devguide
+
 ### Core functionality
 
 - Capture - Captures screenshots of a URL periodically
