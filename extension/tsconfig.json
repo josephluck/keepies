@@ -6,6 +6,7 @@
     "rootDir": "src",
     "outDir": "build",
     "sourceMap": true,
-    "lib": ["es2015", "dom"]
+    "lib": ["es2015", "dom"],
+    "jsx": "react"
   }
 }

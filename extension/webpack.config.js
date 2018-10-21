@@ -3,7 +3,8 @@ const path = require("path");
 module.exports = {
   mode: "development",
   entry: {
-    background: path.join(__dirname, "src/background.ts")
+    background: path.join(__dirname, "src/background.ts"),
+    ui: path.join(__dirname, "src/ui.tsx")
   },
   devtool: "inline-source-map",
   output: {
