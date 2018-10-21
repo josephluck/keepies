@@ -6,5 +6,7 @@
   "repository": "git@github.com:josephluck/keepies.git",
   "author": "Joseph Luck <joseph.luck@sky.com>",
   "license": "MIT",
-  "workspaces": "*"
+  "workspaces": [
+    "extension/ui"
+  ]
 }
