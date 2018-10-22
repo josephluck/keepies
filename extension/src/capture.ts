@@ -13,22 +13,39 @@ function isUrlInApps(settings: Settings, url: string): boolean {
   return !!settings.apps.find(app => url.includes(app.url) || url === app.url);
 }
 
+export function getCurrentTab(): Promise<chrome.tabs.Tab> {
+  return new Promise(resolve => {
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+      if (tabs.length) {
+        resolve(tabs[0]);
+      }
+    });
+  });
+}
+
+function getAllTabs(): Promise<chrome.tabs.Tab[]> {
+  return new Promise(resolve => {
+    chrome.tabs.query({ active: true }, resolve);
+  });
+}
+
 export async function capture() {
   const settings = await getSettings();
-  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    const tab = tabs[0];
-    if (tab && tab.url && isUrlInApps(settings, tab.url)) {
-      chrome.tabs.captureVisibleTab(url => {
-        chrome.downloads.download(
-          {
-            url,
-            filename: `${determineFileName(tab)}.jpeg`
-          },
-          () => {
-            chrome.runtime.sendMessage(messageKeepieMade());
-          }
-        );
-      });
-    }
-  });
+  getAllTabs().then(tabs =>
+    tabs.map(tab => {
+      if (isUrlInApps(settings, tab.url)) {
+        chrome.tabs.captureVisibleTab(dataUrl => {
+          chrome.downloads.download(
+            {
+              url: dataUrl,
+              filename: `${determineFileName(tab)}.jpeg`
+            },
+            () => {
+              chrome.runtime.sendMessage(messageKeepieMade());
+            }
+          );
+        });
+      }
+    })
+  );
 }

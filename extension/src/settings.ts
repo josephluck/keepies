@@ -21,7 +21,7 @@ export function setSetting<K extends SettingsKeys>(key: K, value: Settings[K]) {
   });
 }
 
-export function getSettings(): Promise<Settings> {
+function getAll(): Promise<Settings> {
   return new Promise(resolve => {
     chrome.storage.sync.get(settingsKeys, items => {
       console.log(items);
@@ -30,11 +30,11 @@ export function getSettings(): Promise<Settings> {
   });
 }
 
-export function setupSettings(): Promise<Settings> {
-  return getSettings().then(async current => {
+export function getSettings(): Promise<Settings> {
+  return getAll().then(async current => {
     if (!current.apps) {
       await setSetting("apps", []);
     }
-    return await getSettings();
+    return await getAll();
   });
 }

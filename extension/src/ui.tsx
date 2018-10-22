@@ -1,19 +1,16 @@
 import * as React from "react";
 import helix, { Helix } from "helix-js";
 import renderer from "helix-js/lib/renderers/react";
-import {
-  Settings,
-  getSettings,
-  setSetting,
-  App,
-  setupSettings
-} from "./settings";
+import { Settings, getSettings, setSetting, App } from "./settings";
+import { getCurrentTab } from "./capture";
 
 interface State {
   settings: null | Settings;
+  tab: null | chrome.tabs.Tab;
 }
 interface Reducers {
   storeSettings: Helix.Reducer<State, Settings>;
+  setCurrentTab: Helix.Reducer<State, chrome.tabs.Tab>;
 }
 interface Effects {
   syncSettings: Helix.Effect0<State, Actions>;
@@ -26,18 +23,21 @@ type Actions = Helix.Actions<Reducers, Effects>;
 function model(settings: Settings): Helix.Model<State, Reducers, Effects> {
   return {
     state: {
-      settings
+      settings,
+      tab: null
     },
     reducers: {
-      storeSettings: (state, settings) => ({ ...state, settings })
+      storeSettings: (state, settings) => ({ ...state, settings }),
+      setCurrentTab: (state, tab) => ({ ...state, tab })
     },
     effects: {
       syncSettings(_state, actions) {
-        getSettings().then(actions.syncSettings);
+        getSettings().then(actions.storeSettings);
       },
-      addApp(state, actions) {
+      async addApp(state, actions) {
+        const tab = await getCurrentTab();
         const app: App = {
-          url: window.location.origin
+          url: tab.url
         };
         const apps = [...state.settings.apps, app];
         setSetting("apps", apps).then(actions.syncSettings);
@@ -51,22 +51,15 @@ function model(settings: Settings): Helix.Model<State, Reducers, Effects> {
 }
 
 const component: Helix.Component<State, Actions> = (state, _, actions) => {
-  const appIsEnabled =
-    state.settings &&
-    !!state.settings.apps.find(
-      ({ url }) =>
-        window.location.origin.includes(url) || window.location.origin === url
-    );
   return (
     <div>
-      <button onClick={actions.addApp} disabled={appIsEnabled}>
-        Add current site
-      </button>
+      <button onClick={actions.addApp}>Add current site</button>
       {state.settings ? (
         <>
           {state.settings.apps.map(app => (
-            <div>
-              {app.url} <button onClick={() => actions.removeApp(app)} />
+            <div key={app.url}>
+              {app.url}{" "}
+              <button onClick={() => actions.removeApp(app)}>x</button>
             </div>
           ))}
         </>
@@ -78,10 +71,13 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
 const mount = document.createElement("div");
 document.body.appendChild(mount);
 
-setupSettings().then(settings => {
-  helix<State, Actions>({
+getSettings().then(settings => {
+  const app = helix<State, Actions>({
     model: model(settings),
     component,
     render: renderer(mount)
+  });
+  chrome.tabs.onUpdated.addListener((_, __, tab) => {
+    app.actions.setCurrentTab(tab);
   });
 });
