@@ -10,7 +10,9 @@ function determineFileName(tab: chrome.tabs.Tab): string {
 }
 
 function isUrlInApps(settings: Settings, url: string): boolean {
-  return !!settings.apps.find(app => url.includes(app.url) || url === app.url);
+  return !!settings.apps.find(
+    app => url.includes(app.origin) || url === app.origin
+  );
 }
 
 export function getCurrentTab(): Promise<chrome.tabs.Tab> {
@@ -23,29 +25,26 @@ export function getCurrentTab(): Promise<chrome.tabs.Tab> {
   });
 }
 
-function getAllTabs(): Promise<chrome.tabs.Tab[]> {
-  return new Promise(resolve => {
-    chrome.tabs.query({ active: true }, resolve);
-  });
-}
+// function getAllTabs(): Promise<chrome.tabs.Tab[]> {
+//   return new Promise(resolve => {
+//     chrome.tabs.query({ active: true }, resolve);
+//   });
+// }
 
 export async function capture() {
   const settings = await getSettings();
-  getAllTabs().then(tabs =>
-    tabs.map(tab => {
-      if (isUrlInApps(settings, tab.url)) {
-        chrome.tabs.captureVisibleTab(dataUrl => {
-          chrome.downloads.download(
-            {
-              url: dataUrl,
-              filename: `${determineFileName(tab)}.jpeg`
-            },
-            () => {
-              chrome.runtime.sendMessage(messageKeepieMade());
-            }
-          );
-        });
-      }
-    })
-  );
+  const tab = await getCurrentTab();
+  if (isUrlInApps(settings, tab.url)) {
+    chrome.tabs.captureVisibleTab(dataUrl => {
+      chrome.downloads.download(
+        {
+          url: dataUrl,
+          filename: `${determineFileName(tab)}.jpeg`
+        },
+        () => {
+          chrome.runtime.sendMessage(messageKeepieMade());
+        }
+      );
+    });
+  }
 }

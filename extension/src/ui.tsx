@@ -1,8 +1,9 @@
 import * as React from "react";
 import helix, { Helix } from "helix-js";
 import renderer from "helix-js/lib/renderers/react";
-import { Settings, getSettings, setSetting, App } from "./settings";
+import { Settings, getSettings, App, removeApp, storeApp } from "./settings";
 import { getCurrentTab } from "./capture";
+import * as urlParse from "url-parse";
 
 interface State {
   settings: null | Settings;
@@ -34,31 +35,33 @@ function model(settings: Settings): Helix.Model<State, Reducers, Effects> {
       syncSettings(_state, actions) {
         getSettings().then(actions.storeSettings);
       },
-      async addApp(state, actions) {
+      async addApp(_state, actions) {
         const tab = await getCurrentTab();
-        const app: App = {
-          url: tab.url
-        };
-        const apps = [...state.settings.apps, app];
-        setSetting("apps", apps).then(actions.syncSettings);
+        storeApp(tab.url).then(actions.syncSettings);
       },
-      removeApp(state, actions, app) {
-        const apps = state.settings.apps.filter(({ url }) => url !== app.url);
-        setSetting("apps", apps).then(actions.syncSettings);
+      removeApp(_state, actions, app) {
+        removeApp(app).then(actions.syncSettings);
       }
     }
   };
 }
 
 const component: Helix.Component<State, Actions> = (state, _, actions) => {
+  const currentOrigin = state.tab ? urlParse(state.tab.url).origin : "";
+  const appIsAlreadyAdded = state.settings
+    ? !!state.settings.apps.find(app => app.origin === currentOrigin)
+    : false;
   return (
     <div>
-      <button onClick={actions.addApp}>Add current site</button>
+      {currentOrigin}
+      <button onClick={actions.addApp} disabled={appIsAlreadyAdded}>
+        Add current site
+      </button>
       {state.settings ? (
         <>
           {state.settings.apps.map(app => (
-            <div key={app.url}>
-              {app.url}{" "}
+            <div key={app.origin}>
+              {app.origin}{" "}
               <button onClick={() => actions.removeApp(app)}>x</button>
             </div>
           ))}
@@ -77,7 +80,9 @@ getSettings().then(settings => {
     component,
     render: renderer(mount)
   });
-  chrome.tabs.onUpdated.addListener((_, __, tab) => {
+
+  chrome.tabs.onActivated.addListener(async () => {
+    const tab = await getCurrentTab();
     app.actions.setCurrentTab(tab);
   });
 });

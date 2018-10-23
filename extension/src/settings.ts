@@ -1,5 +1,7 @@
+import * as urlParse from "url-parse";
+
 export interface App {
-  url: string;
+  origin: string;
 }
 
 export type SettingsKeys = "apps";
@@ -23,18 +25,30 @@ export function setSetting<K extends SettingsKeys>(key: K, value: Settings[K]) {
 
 function getAll(): Promise<Settings> {
   return new Promise(resolve => {
-    chrome.storage.sync.get(settingsKeys, items => {
-      console.log(items);
-      resolve(items as Settings);
+    chrome.storage.sync.get(settingsKeys, settings => {
+      console.log({ settings });
+      resolve(settings as Settings);
     });
   });
 }
 
-export function getSettings(): Promise<Settings> {
-  return getAll().then(async current => {
-    if (!current.apps) {
-      await setSetting("apps", []);
-    }
-    return await getAll();
-  });
+export async function getSettings(): Promise<Settings> {
+  const current = await getAll();
+  if (!current.apps) {
+    await setSetting("apps", []);
+  }
+  return await getAll();
+}
+
+export async function storeApp(url: string): Promise<Settings> {
+  const current = await getAll();
+  const origin = urlParse(url, {}).origin;
+  await setSetting("apps", [...current.apps, { origin: origin }]);
+  return await getAll();
+}
+
+export async function removeApp(app: App): Promise<Settings> {
+  const current = await getAll();
+  await setSetting("apps", current.apps.filter(a => a.origin !== app.origin));
+  return await getAll();
 }
