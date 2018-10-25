@@ -2,7 +2,7 @@ import * as React from "react";
 import helix, { Helix } from "helix-js";
 import renderer from "helix-js/lib/renderers/react";
 import { Settings, getSettings, App, removeApp, storeApp } from "./settings";
-import { getCurrentTab } from "./capture";
+import { getCurrentTab, requestKeepie } from "./keepie";
 import * as urlParse from "url-parse";
 
 interface State {
@@ -17,6 +17,7 @@ interface Effects {
   syncSettings: Helix.Effect0<State, Actions>;
   addApp: Helix.Effect0<State, Actions>;
   removeApp: Helix.Effect<State, Actions, App>;
+  takeKeepie: Helix.Effect0<State, Actions>;
 }
 
 type Actions = Helix.Actions<Reducers, Effects>;
@@ -37,10 +38,15 @@ function model(settings: Settings): Helix.Model<State, Reducers, Effects> {
       },
       async addApp(_state, actions) {
         const tab = await getCurrentTab();
-        storeApp(tab.url).then(actions.syncSettings);
+        storeApp(tab.url)
+          .then(actions.syncSettings)
+          .then(requestKeepie);
       },
       removeApp(_state, actions, app) {
         removeApp(app).then(actions.syncSettings);
+      },
+      takeKeepie(_state, _actions) {
+        requestKeepie();
       }
     }
   };
@@ -51,12 +57,12 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
   const appIsAlreadyAdded = state.settings
     ? !!state.settings.apps.find(app => app.origin === currentOrigin)
     : false;
+  console.log({ appIsAlreadyAdded });
   return (
     <div>
       {currentOrigin}
-      <button onClick={actions.addApp} disabled={appIsAlreadyAdded}>
-        Add current site
-      </button>
+      <button onClick={actions.addApp}>Add current site</button>
+      <button onClick={actions.takeKeepie}>Take a Keepie</button>
       {state.settings ? (
         <>
           {state.settings.apps.map(app => (

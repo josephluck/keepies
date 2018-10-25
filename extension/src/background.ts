@@ -1,22 +1,35 @@
-import { ALARM_CAPTURE } from "./messages";
-import { capture } from "./capture";
+import { ALARM_KEEPIE, messageRequestKeepie } from "./messages";
+import { keepie } from "./keepie";
 
-function scheduleCaptures() {
-  chrome.alarms.create(ALARM_CAPTURE, {
+function scheduleKeepies() {
+  console.log("Scheduling keepies");
+  chrome.alarms.create(ALARM_KEEPIE, {
     when: Date.now() + 5000,
     periodInMinutes: 1
   });
 }
 
-function listenForCaptures() {
+function listenForKeepies() {
   chrome.alarms.onAlarm.addListener(alarm => {
-    if (alarm.name === ALARM_CAPTURE) {
-      capture();
+    if (alarm.name === ALARM_KEEPIE) {
+      console.log("Keepie alarm received, beginning keepie");
+      keepie();
+    }
+  });
+  chrome.runtime.onMessage.addListener(message => {
+    if (
+      message &&
+      message.name &&
+      message.name === messageRequestKeepie().name
+    ) {
+      console.log("Keepie message received, beginning keepie");
+      keepie();
     }
   });
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-  scheduleCaptures();
-  listenForCaptures();
+  console.log("Chrome runtime installed, instantiating app");
+  scheduleKeepies();
+  listenForKeepies();
 });

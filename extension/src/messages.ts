@@ -1,4 +1,4 @@
-export const ALARM_CAPTURE = "KEEPIE_CAPTURE";
+export const ALARM_KEEPIE = "KEEPIE_KEEPIE";
 
 interface Message extends Record<string, any> {
   name: string;
@@ -7,5 +7,11 @@ interface Message extends Record<string, any> {
 export function messageKeepieMade(): Message {
   return {
     name: "KEEPIE_MADE"
+  };
+}
+
+export function messageRequestKeepie(): Message {
+  return {
+    name: "REQUEST_KEEPIE"
   };
 }
