@@ -4,7 +4,7 @@ import renderer from "helix-js/lib/renderers/react";
 import { Settings, getSettings, App, removeApp, storeApp } from "./settings";
 import { getCurrentTab, requestKeepie } from "./keepie";
 import * as urlParse from "url-parse";
-import { messageActiveTabChanged, messageKeepieMade } from "./messages";
+import { messageActiveTabChanged } from "./messages";
 
 interface State {
   settings: null | Settings;
@@ -65,13 +65,13 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
     : false;
   return (
     <div>
-      {currentOrigin}
-      <button onClick={actions.addApp} disabled={appIsInStoredApps}>
-        Add current site
-      </button>
-      <button onClick={actions.takeKeepie} disabled={!appIsInStoredApps}>
-        Take a Keepie
-      </button>
+      {appIsInStoredApps ? (
+        <button onClick={actions.takeKeepie}>Take a Keepie</button>
+      ) : (
+        <button onClick={actions.addApp}>
+          Take Keepies of {currentOrigin}
+        </button>
+      )}
       {state.settings ? (
         <>
           {state.settings.apps.map(app => (
@@ -82,8 +82,13 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
           ))}
         </>
       ) : null}
-
-      {JSON.stringify(state)}
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <code>{JSON.stringify(state)}</code>
     </div>
   );
 };
