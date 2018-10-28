@@ -30,7 +30,7 @@ export function getCurrentTab(): Promise<chrome.tabs.Tab> {
         console.log("Active tab found");
         resolve(tabs[0]);
       } else {
-        console.warn("No active tabs found");
+        console.log("No active tabs found");
       }
     });
   });
@@ -53,7 +53,7 @@ export async function keepie() {
           chrome.runtime.sendMessage(messageKeepieMade());
         });
       } else {
-        console.warn("No URL generated via captureVisibleTab");
+        console.log("No URL generated via captureVisibleTab");
       }
     });
   } else {

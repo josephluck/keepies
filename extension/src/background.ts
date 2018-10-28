@@ -1,4 +1,8 @@
-import { ALARM_KEEPIE, messageRequestKeepie } from "./messages";
+import {
+  ALARM_KEEPIE,
+  messageRequestKeepie,
+  messageActiveTabChanged
+} from "./messages";
 import { keepie } from "./keepie";
 
 function scheduleKeepies() {
@@ -28,8 +32,15 @@ function listenForKeepies() {
   });
 }
 
+function listenForTabChange() {
+  chrome.tabs.onActivated.addListener(async () => {
+    chrome.runtime.sendMessage(messageActiveTabChanged());
+  });
+}
+
 chrome.runtime.onInstalled.addListener(() => {
   console.log("Chrome runtime installed, instantiating app");
   scheduleKeepies();
   listenForKeepies();
+  listenForTabChange();
 });

@@ -4,6 +4,7 @@ import renderer from "helix-js/lib/renderers/react";
 import { Settings, getSettings, App, removeApp, storeApp } from "./settings";
 import { getCurrentTab, requestKeepie } from "./keepie";
 import * as urlParse from "url-parse";
+import { messageActiveTabChanged, messageKeepieMade } from "./messages";
 
 interface State {
   settings: null | Settings;
@@ -18,6 +19,7 @@ interface Effects {
   addApp: Helix.Effect0<State, Actions>;
   removeApp: Helix.Effect<State, Actions, App>;
   takeKeepie: Helix.Effect0<State, Actions>;
+  onActiveTabChanged: Helix.Effect0<State, Actions>;
 }
 
 type Actions = Helix.Actions<Reducers, Effects>;
@@ -47,6 +49,10 @@ function model(settings: Settings): Helix.Model<State, Reducers, Effects> {
       },
       takeKeepie(_state, _actions) {
         requestKeepie();
+      },
+      async onActiveTabChanged(_state, actions) {
+        const tab = await getCurrentTab();
+        actions.setCurrentTab(tab);
       }
     }
   };
@@ -54,15 +60,18 @@ function model(settings: Settings): Helix.Model<State, Reducers, Effects> {
 
 const component: Helix.Component<State, Actions> = (state, _, actions) => {
   const currentOrigin = state.tab ? urlParse(state.tab.url).origin : "";
-  const appIsAlreadyAdded = state.settings
+  const appIsInStoredApps = state.settings
     ? !!state.settings.apps.find(app => app.origin === currentOrigin)
     : false;
-  console.log({ appIsAlreadyAdded });
   return (
     <div>
       {currentOrigin}
-      <button onClick={actions.addApp}>Add current site</button>
-      <button onClick={actions.takeKeepie}>Take a Keepie</button>
+      <button onClick={actions.addApp} disabled={appIsInStoredApps}>
+        Add current site
+      </button>
+      <button onClick={actions.takeKeepie} disabled={!appIsInStoredApps}>
+        Take a Keepie
+      </button>
       {state.settings ? (
         <>
           {state.settings.apps.map(app => (
@@ -73,6 +82,8 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
           ))}
         </>
       ) : null}
+
+      {JSON.stringify(state)}
     </div>
   );
 };
@@ -80,15 +91,17 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
 const mount = document.createElement("div");
 document.body.appendChild(mount);
 
-getSettings().then(settings => {
+getSettings().then(async settings => {
   const app = helix<State, Actions>({
     model: model(settings),
     component,
     render: renderer(mount)
   });
 
-  chrome.tabs.onActivated.addListener(async () => {
-    const tab = await getCurrentTab();
-    app.actions.setCurrentTab(tab);
+  app.actions.onActiveTabChanged();
+  chrome.runtime.onMessage.addListener(async message => {
+    if (message.type === messageActiveTabChanged().name) {
+      app.actions.onActiveTabChanged();
+    }
   });
 });

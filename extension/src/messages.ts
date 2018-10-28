@@ -15,3 +15,9 @@ export function messageRequestKeepie(): Message {
     name: "REQUEST_KEEPIE"
   };
 }
+
+export function messageActiveTabChanged(): Message {
+  return {
+    name: "ACTIVE_TAB_CHANGED"
+  };
+}
