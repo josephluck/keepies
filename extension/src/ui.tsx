@@ -5,6 +5,13 @@ import { Settings, getSettings, App, removeApp, storeApp } from "./settings";
 import { getCurrentTab, requestKeepie } from "./keepie";
 import * as urlParse from "url-parse";
 import { messageActiveTabChanged } from "./messages";
+import {
+  PrimaryButton,
+  SecondaryButton,
+  UnstyledButton
+} from "./components/button";
+import { GlobalStyles } from "./components/theme";
+import { Flex, Box } from "@rebass/grid";
 
 interface State {
   settings: null | Settings;
@@ -63,32 +70,31 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
   const appIsInStoredApps = state.settings
     ? !!state.settings.apps.find(app => app.origin === currentOrigin)
     : false;
+
   return (
     <div>
+      <GlobalStyles />
       {appIsInStoredApps ? (
-        <button onClick={actions.takeKeepie}>Take a Keepie</button>
+        <PrimaryButton onClick={actions.takeKeepie}>
+          Take a Keepie now
+        </PrimaryButton>
       ) : (
-        <button onClick={actions.addApp}>
-          Take Keepies of {currentOrigin}
-        </button>
+        <PrimaryButton onClick={actions.addApp}>
+          Take keepies of this site
+        </PrimaryButton>
       )}
       {state.settings ? (
         <>
           {state.settings.apps.map(app => (
-            <div key={app.origin}>
-              {app.origin}{" "}
-              <button onClick={() => actions.removeApp(app)}>x</button>
-            </div>
+            <Flex alignItems="center" key={app.origin}>
+              <Box flex={1}>{app.origin}</Box>
+              <UnstyledButton onClick={() => actions.removeApp(app)}>
+                X
+              </UnstyledButton>
+            </Flex>
           ))}
         </>
       ) : null}
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <code>{JSON.stringify(state)}</code>
     </div>
   );
 };
