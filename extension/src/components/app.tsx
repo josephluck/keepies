@@ -45,6 +45,21 @@ const AppInitials = styled.div`
   letter-spacing: 0.5px;
 `;
 
+const AppOrigin = styled.div`
+  font-weight: ${theme.fontWeight._400};
+  font-size: ${theme.font._12.size};
+  line-height: ${theme.font._12.lineHeight};
+  color: ${theme.colors.disabledLinkText};
+  margin-top: ${theme.spacing._4};
+  opacity: 0.8;
+`;
+
+const Labels = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
 export function App({
   app,
   onRemove
@@ -61,7 +76,10 @@ export function App({
       <AppIcon style={iconStyle}>
         {!app.icon ? <AppInitials>{initials}</AppInitials> : null}
       </AppIcon>
-      <AppName>{app.origin}</AppName>
+      <Labels>
+        <AppName>{app.name}</AppName>
+        <AppOrigin>{app.origin}</AppOrigin>
+      </Labels>
       <ActionLink onClick={onRemove}>Remove</ActionLink>
     </Wrapper>
   );

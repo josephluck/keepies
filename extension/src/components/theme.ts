@@ -25,6 +25,7 @@ export const theme = {
     _7: "#309edc"
   },
   spacing: {
+    _4: rem(4),
     _10: rem(10),
     _16: rem(16),
     _20: rem(20),
