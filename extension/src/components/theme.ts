@@ -31,7 +31,8 @@ export const theme = {
     _36: rem(36)
   },
   size: {
-    appIcon: rem(40)
+    appIcon: rem(40),
+    extension: "400px"
   },
   font: {
     base: "16px",

@@ -5,12 +5,17 @@ import { getSettings, removeApp, storeApp } from "./api/sdk";
 import { getCurrentTab, requestKeepie } from "./keepie";
 import * as urlParse from "url-parse";
 import { messageActiveTabChanged } from "./messages";
-import { GlobalStyles } from "./components/theme";
-import { Flex, Box } from "@rebass/grid";
+import { GlobalStyles, theme } from "./components/theme";
 import { Models } from "./api/models";
 import { App } from "./components/app";
 import { AddNew } from "./components/add-new";
 import { Logo, LogoWrap } from "./components/logo";
+import { Collapse } from "react-collapse";
+import styled from "styled-components";
+
+const Extension = styled.div`
+  width: ${theme.size.extension};
+`;
 
 interface State {
   settings: null | Models.Settings;
@@ -73,13 +78,13 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
     : false;
 
   return (
-    <div>
+    <Extension>
       <GlobalStyles />
       <LogoWrap>
         <Logo>Keepies</Logo>
       </LogoWrap>
       {state.settings ? (
-        <>
+        <Collapse isOpened>
           {state.settings.apps.map(app => (
             <App
               app={app}
@@ -87,13 +92,13 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
               key={app.origin}
             />
           ))}
-        </>
+        </Collapse>
       ) : null}
       <AddNew
         onSubmit={values => actions.addApp({ name: values.name })}
         alreadyAdded={alreadyAddedCurrentTab}
       />
-    </div>
+    </Extension>
   );
 };
 
