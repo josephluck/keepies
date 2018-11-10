@@ -1,48 +1,41 @@
 import * as React from "react";
 import styled from "styled-components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { Models } from "../api/models";
-import urlParse = require("url-parse");
+import { theme } from "./theme";
 
 const Wrapper = styled.div`
-  border-bottom: solid 1px black;
-  padding: 16px 20px;
+  border-bottom: solid 1px ${theme.colors.border};
+  padding: ${theme.spacing._16} ${theme.spacing._20};
   display: flex;
   align-items: center;
 `;
 
 const AppIcon = styled.div`
-  width: 40px;
-  height: 40px;
-  margin-right: 20px;
+  width: ${theme.size.appIcon};
+  height: ${theme.size.appIcon};
+  margin-right: ${theme.spacing._20};
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
-  background: black;
-  border-radius: 9999px;
+  border-radius: ${theme.borderRadius.circle};
   overflow: hidden;
   flex: 0 0 auto;
   position: relative;
 `;
 
 const AppName = styled.span`
-  margin-right: 20px;
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: 500;
+  margin-right: ${theme.spacing._20};
+  font-size: ${theme.font._16.size};
+  line-height: ${theme.font._16.lineHeight};
+  font-weight: ${theme.fontWeight._500};
   flex: 1;
 `;
 
-const ExpansionIcon = styled.div<{ isExpanded: boolean }>`
-  position: relative;
-  width: 16px;
-  height: 16px;
-  font-size: 16px;
-  line-height: 16px;
-  color: black;
-  transition: all 333ms ease;
-  transform: rotate(${props => (props.isExpanded ? "180deg" : "0deg")});
+const RemoveLink = styled.span`
+  font-size: ${theme.font._12.size};
+  line-height: ${theme.font._12.lineHeight};
+  font-weight: ${theme.fontWeight._600};
+  color: ${theme.colors.link};
 `;
 
 const AppInitials = styled.div`
@@ -50,26 +43,26 @@ const AppInitials = styled.div`
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  font-weight: bold;
-  font-size: 12px;
-  line-height: 12px;
-  color: white;
+  font-weight: ${theme.fontWeight.bold};
+  font-size: ${theme.font._12.size};
+  line-height: ${theme.font._12.lineHeight};
+  color: ${theme.colors.white};
   text-transform: uppercase;
   letter-spacing: 0.5px;
 `;
 
 export function App({ app }: { app: Models.App }) {
   const initials = `${app.name.charAt(0)}${app.name.charAt(1)}`;
-  const iconStyle = app.icon ? { backgroundImage: `url(${app.icon})` } : {};
+  const iconStyle = app.icon
+    ? { backgroundImage: `url(${app.icon})` }
+    : { background: theme.colors.avatarGradient };
   return (
     <Wrapper>
       <AppIcon style={iconStyle}>
         {!app.icon ? <AppInitials>{initials}</AppInitials> : null}
       </AppIcon>
       <AppName>{app.origin}</AppName>
-      <ExpansionIcon isExpanded={false}>
-        <FontAwesomeIcon icon={faChevronDown} />
-      </ExpansionIcon>
+      <RemoveLink>Remove</RemoveLink>
     </Wrapper>
   );
 }
