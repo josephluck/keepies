@@ -10,6 +10,7 @@ export const theme = {
     white: "#FFFFFF",
     font: "#1C0529",
     border: "#ededef",
+    form: "#ededef",
     link: "#309edc",
     avatarGradient: "linear-gradient(45deg, #1C0529 0%, #6C6794 100%)",
     _1: "#6C6794",
@@ -29,6 +30,7 @@ export const theme = {
     appIcon: rem(40)
   },
   font: {
+    base: "16px",
     _12: {
       size: rem(12),
       lineHeight: rem(14)
@@ -61,6 +63,6 @@ export const GlobalStyles = createGlobalStyle`
     padding: 0;
     font-family: 'Inter UI', sans-serif;
     color: ${theme.colors.font};
-    font-size: ${theme.font._16.size};
+    font-size: ${theme.font.base};
   }
 `;

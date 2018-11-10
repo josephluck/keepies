@@ -22,5 +22,23 @@ export default function button(s: StoriesOf) {
           })}
         />
       );
+    })
+    .add("multiple", () => {
+      return (
+        <>
+          <App app={Fixtures.app()} />
+          <App app={Fixtures.app()} />
+          <App app={Fixtures.app()} />
+          <App
+            app={Fixtures.app({
+              icon:
+                "https://cdn4.iconfinder.com/data/icons/various-icons-2/476/Spotify.png",
+              name: "Spotify",
+              origin: "https://spotify.com"
+            })}
+          />
+          <App app={Fixtures.app()} />
+        </>
+      );
     });
 }

@@ -2,6 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 import { Models } from "../api/models";
 import { theme } from "./theme";
+import { ActionLink } from "./action-link";
 
 const Wrapper = styled.div`
   border-bottom: solid 1px ${theme.colors.border};
@@ -31,13 +32,6 @@ const AppName = styled.span`
   flex: 1;
 `;
 
-const RemoveLink = styled.span`
-  font-size: ${theme.font._12.size};
-  line-height: ${theme.font._12.lineHeight};
-  font-weight: ${theme.fontWeight._600};
-  color: ${theme.colors.link};
-`;
-
 const AppInitials = styled.div`
   position: absolute;
   top: 50%;
@@ -62,7 +56,7 @@ export function App({ app }: { app: Models.App }) {
         {!app.icon ? <AppInitials>{initials}</AppInitials> : null}
       </AppIcon>
       <AppName>{app.origin}</AppName>
-      <RemoveLink>Remove</RemoveLink>
+      <ActionLink>Remove</ActionLink>
     </Wrapper>
   );
 }
