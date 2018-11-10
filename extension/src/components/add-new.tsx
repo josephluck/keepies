@@ -162,8 +162,9 @@ export class AddNew extends React.Component<Props, State> {
                   name="name"
                   render={({ field, form }: FieldProps<Fields>) => (
                     <Input
-                      required
                       {...field}
+                      required
+                      placeholder="App name"
                       onFocus={this.handleFocus}
                       onBlur={this.handleBlur}
                       ref={elm =>

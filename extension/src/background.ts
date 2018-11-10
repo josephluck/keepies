@@ -9,7 +9,7 @@ function scheduleKeepies() {
   console.log("Scheduling keepies");
   chrome.alarms.create(ALARM_KEEPIE, {
     when: Date.now() + 5000,
-    periodInMinutes: 0.1
+    periodInMinutes: 30
   });
 }
 

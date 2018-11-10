@@ -14,7 +14,7 @@ export const theme = {
     link: "#309edc",
     avatarGradient: "linear-gradient(45deg, #1C0529 0%, #6C6794 100%)",
     disabledLinkText: "#6C6794",
-    logoLeft: "#6C6794",
+    logoLeft: "#309edc",
     logoRight: "#1C0529",
     _1: "#6C6794",
     _2: "#B8B8BD",
