@@ -1,7 +1,7 @@
 import * as React from "react";
 import helix, { Helix } from "helix-js";
 import renderer from "helix-js/lib/renderers/react";
-import { Settings, getSettings, App, removeApp, storeApp } from "./settings";
+import { getSettings, removeApp, storeApp } from "./api/sdk";
 import { getCurrentTab, requestKeepie } from "./keepie";
 import * as urlParse from "url-parse";
 import { messageActiveTabChanged } from "./messages";
@@ -12,26 +12,29 @@ import {
 } from "./components/button";
 import { GlobalStyles } from "./components/theme";
 import { Flex, Box } from "@rebass/grid";
+import { Models } from "./api/models";
 
 interface State {
-  settings: null | Settings;
+  settings: null | Models.Settings;
   tab: null | chrome.tabs.Tab;
 }
 interface Reducers {
-  storeSettings: Helix.Reducer<State, Settings>;
+  storeSettings: Helix.Reducer<State, Models.Settings>;
   setCurrentTab: Helix.Reducer<State, chrome.tabs.Tab>;
 }
 interface Effects {
   syncSettings: Helix.Effect0<State, Actions>;
-  addApp: Helix.Effect0<State, Actions>;
-  removeApp: Helix.Effect<State, Actions, App>;
+  addApp: Helix.Effect<State, Actions, { name: string }>;
+  removeApp: Helix.Effect<State, Actions, Models.App>;
   takeKeepie: Helix.Effect0<State, Actions>;
   onActiveTabChanged: Helix.Effect0<State, Actions>;
 }
 
 type Actions = Helix.Actions<Reducers, Effects>;
 
-function model(settings: Settings): Helix.Model<State, Reducers, Effects> {
+function model(
+  settings: Models.Settings
+): Helix.Model<State, Reducers, Effects> {
   return {
     state: {
       settings,
@@ -45,9 +48,9 @@ function model(settings: Settings): Helix.Model<State, Reducers, Effects> {
       syncSettings(_state, actions) {
         getSettings().then(actions.storeSettings);
       },
-      async addApp(_state, actions) {
+      async addApp(_state, actions, { name }) {
         const tab = await getCurrentTab();
-        storeApp(tab.url)
+        storeApp({ origin: tab.url, icon: tab.favIconUrl, name })
           .then(actions.syncSettings)
           .then(requestKeepie);
       },
@@ -79,7 +82,7 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
           Take a Keepie now
         </PrimaryButton>
       ) : (
-        <PrimaryButton onClick={actions.addApp}>
+        <PrimaryButton onClick={() => actions.addApp({ name: "Todo" })}>
           Take keepies of this site
         </PrimaryButton>
       )}

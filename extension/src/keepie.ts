@@ -1,5 +1,6 @@
 import { messageKeepieMade, messageRequestKeepie } from "./messages";
-import { getSettings, Settings } from "./settings";
+import { getSettings } from "./api/sdk";
+import { Models } from "./api/models";
 
 function replaceWhiteSpace(str) {
   return str
@@ -17,7 +18,7 @@ function generateFileName(tab: chrome.tabs.Tab): string {
     .toLowerCase();
 }
 
-function isUrlInApps(settings: Settings, url: string): boolean {
+function isUrlInApps(settings: Models.Settings, url: string): boolean {
   return !!settings.apps.find(
     app => url.includes(app.origin) || url === app.origin
   );

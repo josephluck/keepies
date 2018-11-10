@@ -30,68 +30,6 @@ function rem(px: number): string {
 }
 
 export const GlobalStyles = createGlobalStyle`
-  @font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-UI-Regular.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-  }
-  @font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-UI-Medium.ttf") format("truetype");
-    font-weight: 500;
-    font-style: normal;
-  }
-  @font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-UI-SemiBold.ttf") format("truetype");
-    font-weight: 600;
-    font-style: normal;
-  }
-  @font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-UI-Bold.ttf") format("truetype");
-    font-weight: 700;
-    font-style: normal;
-  }
-  @font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-UI-ExtraBold.ttf") format("truetype");
-    font-weight: bold;
-    font-style: normal;
-  }
-
-  @font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-UI-Italic.ttf") format("truetype");
-    font-weight: normal;
-    font-style: italic;
-  }
-  @font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-UI-MediumItalic.ttf") format("truetype");
-    font-weight: 500;
-    font-style: italic;
-  }
-  @font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-UI-SemiBoldItalic.ttf") format("truetype");
-    font-weight: 600;
-    font-style: italic;
-  }
-  @font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-UI-BoldItalic.ttf") format("truetype");
-    font-weight: 700;
-    font-style: italic;
-  }
-  @font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-UI-ExtraBoldItalic.ttf") format("truetype");
-    font-weight: bold;
-    font-style: italic;
-  }
-
   * {
     box-sizing: border-box;
     font-family: inherit;
@@ -101,7 +39,7 @@ export const GlobalStyles = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter UI', sans-serif;
     font-size: ${theme.font._16.size};
   }
 `;
