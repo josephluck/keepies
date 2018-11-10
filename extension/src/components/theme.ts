@@ -14,6 +14,8 @@ export const theme = {
     link: "#309edc",
     avatarGradient: "linear-gradient(45deg, #1C0529 0%, #6C6794 100%)",
     disabledLinkText: "#6C6794",
+    logoLeft: "#6C6794",
+    logoRight: "#1C0529",
     _1: "#6C6794",
     _2: "#B8B8BD",
     _3: "#F2290D",
@@ -25,7 +27,8 @@ export const theme = {
   spacing: {
     _10: rem(10),
     _16: rem(16),
-    _20: rem(20)
+    _20: rem(20),
+    _36: rem(36)
   },
   size: {
     appIcon: rem(40)
@@ -43,6 +46,14 @@ export const theme = {
     _16: {
       size: rem(16),
       lineHeight: rem(19)
+    },
+    _18: {
+      size: rem(18),
+      lineHeight: rem(21)
+    },
+    _24: {
+      size: rem(24),
+      lineHeight: rem(28)
     }
   },
   fontWeight: {

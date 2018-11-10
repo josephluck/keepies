@@ -7,14 +7,15 @@ import { AddNew } from "./add-new";
 export default function button(s: StoriesOf) {
   s("App", module)
     .add("default", () => {
-      return <App app={Fixtures.app()} />;
+      return <App onRemove={console.log} app={Fixtures.app()} />;
     })
     .add("without image", () => {
-      return <App app={Fixtures.app({ icon: null })} />;
+      return <App onRemove={console.log} app={Fixtures.app({ icon: null })} />;
     })
     .add("spotify", () => {
       return (
         <App
+          onRemove={console.log}
           app={Fixtures.app({
             icon:
               "https://cdn4.iconfinder.com/data/icons/various-icons-2/476/Spotify.png",
@@ -27,10 +28,11 @@ export default function button(s: StoriesOf) {
     .add("list", () => {
       return (
         <>
-          <App app={Fixtures.app()} />
-          <App app={Fixtures.app()} />
-          <App app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
           <App
+            onRemove={console.log}
             app={Fixtures.app({
               icon:
                 "https://cdn4.iconfinder.com/data/icons/various-icons-2/476/Spotify.png",
@@ -38,17 +40,18 @@ export default function button(s: StoriesOf) {
               origin: "https://spotify.com"
             })}
           />
-          <App app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
         </>
       );
     })
     .add("list with form at bottom", () => {
       return (
         <>
-          <App app={Fixtures.app()} />
-          <App app={Fixtures.app()} />
-          <App app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
           <App
+            onRemove={console.log}
             app={Fixtures.app({
               icon:
                 "https://cdn4.iconfinder.com/data/icons/various-icons-2/476/Spotify.png",
@@ -56,7 +59,7 @@ export default function button(s: StoriesOf) {
               origin: "https://spotify.com"
             })}
           />
-          <App app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
           <AddNew onSubmit={console.log} alreadyAdded={false} />
         </>
       );
@@ -64,10 +67,11 @@ export default function button(s: StoriesOf) {
     .add("list with form already added at bottom", () => {
       return (
         <>
-          <App app={Fixtures.app()} />
-          <App app={Fixtures.app()} />
-          <App app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
           <App
+            onRemove={console.log}
             app={Fixtures.app({
               icon:
                 "https://cdn4.iconfinder.com/data/icons/various-icons-2/476/Spotify.png",
@@ -75,7 +79,7 @@ export default function button(s: StoriesOf) {
               origin: "https://spotify.com"
             })}
           />
-          <App app={Fixtures.app()} />
+          <App onRemove={console.log} app={Fixtures.app()} />
           <AddNew onSubmit={console.log} alreadyAdded={true} />
         </>
       );

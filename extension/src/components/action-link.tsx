@@ -7,4 +7,6 @@ export const ActionLink = styled.span`
   line-height: ${theme.font._12.lineHeight};
   font-weight: ${theme.fontWeight._600};
   color: ${theme.colors.link};
+  cursor: ${props => (props.onClick ? "pointer" : "unset")};
+  white-space: nowrap;
 `;

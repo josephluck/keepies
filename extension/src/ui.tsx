@@ -5,14 +5,12 @@ import { getSettings, removeApp, storeApp } from "./api/sdk";
 import { getCurrentTab, requestKeepie } from "./keepie";
 import * as urlParse from "url-parse";
 import { messageActiveTabChanged } from "./messages";
-import {
-  PrimaryButton,
-  SecondaryButton,
-  UnstyledButton
-} from "./components/button";
 import { GlobalStyles } from "./components/theme";
 import { Flex, Box } from "@rebass/grid";
 import { Models } from "./api/models";
+import { App } from "./components/app";
+import { AddNew } from "./components/add-new";
+import { Logo, LogoWrap } from "./components/logo";
 
 interface State {
   settings: null | Models.Settings;
@@ -70,34 +68,31 @@ function model(
 
 const component: Helix.Component<State, Actions> = (state, _, actions) => {
   const currentOrigin = state.tab ? urlParse(state.tab.url).origin : "";
-  const appIsInStoredApps = state.settings
+  const alreadyAddedCurrentTab = state.settings
     ? !!state.settings.apps.find(app => app.origin === currentOrigin)
     : false;
 
   return (
     <div>
       <GlobalStyles />
-      {appIsInStoredApps ? (
-        <PrimaryButton onClick={actions.takeKeepie}>
-          Take a Keepie now
-        </PrimaryButton>
-      ) : (
-        <PrimaryButton onClick={() => actions.addApp({ name: "Todo" })}>
-          Take keepies of this site
-        </PrimaryButton>
-      )}
+      <LogoWrap>
+        <Logo>Keepies</Logo>
+      </LogoWrap>
       {state.settings ? (
         <>
           {state.settings.apps.map(app => (
-            <Flex alignItems="center" key={app.origin}>
-              <Box flex={1}>{app.origin}</Box>
-              <UnstyledButton onClick={() => actions.removeApp(app)}>
-                X
-              </UnstyledButton>
-            </Flex>
+            <App
+              app={app}
+              onRemove={() => actions.removeApp(app)}
+              key={app.origin}
+            />
           ))}
         </>
       ) : null}
+      <AddNew
+        onSubmit={values => actions.addApp({ name: values.name })}
+        alreadyAdded={alreadyAddedCurrentTab}
+      />
     </div>
   );
 };

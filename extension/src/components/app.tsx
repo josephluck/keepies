@@ -14,7 +14,7 @@ const Wrapper = styled.div`
 const AppIcon = styled.div`
   width: ${theme.size.appIcon};
   height: ${theme.size.appIcon};
-  margin-right: ${theme.spacing._20};
+  margin-right: ${theme.spacing._16};
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
@@ -25,7 +25,7 @@ const AppIcon = styled.div`
 `;
 
 const AppName = styled.span`
-  margin-right: ${theme.spacing._20};
+  margin-right: ${theme.spacing._36};
   font-size: ${theme.font._16.size};
   line-height: ${theme.font._16.lineHeight};
   font-weight: ${theme.fontWeight._500};
@@ -45,7 +45,13 @@ const AppInitials = styled.div`
   letter-spacing: 0.5px;
 `;
 
-export function App({ app }: { app: Models.App }) {
+export function App({
+  app,
+  onRemove
+}: {
+  app: Models.App;
+  onRemove: () => any;
+}) {
   const initials = `${app.name.charAt(0)}${app.name.charAt(1)}`;
   const iconStyle = app.icon
     ? { backgroundImage: `url(${app.icon})` }
@@ -56,7 +62,7 @@ export function App({ app }: { app: Models.App }) {
         {!app.icon ? <AppInitials>{initials}</AppInitials> : null}
       </AppIcon>
       <AppName>{app.origin}</AppName>
-      <ActionLink>Remove</ActionLink>
+      <ActionLink onClick={onRemove}>Remove</ActionLink>
     </Wrapper>
   );
 }
