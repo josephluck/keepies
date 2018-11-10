@@ -110,6 +110,7 @@ getSettings().then(async settings => {
   });
 
   app.actions.onActiveTabChanged();
+
   chrome.runtime.onMessage.addListener(async message => {
     if (message.type === messageActiveTabChanged().name) {
       app.actions.onActiveTabChanged();
