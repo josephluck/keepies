@@ -19,37 +19,6 @@ const Form = styled.form<{ showing: boolean }>`
   opacity: ${props => (props.showing ? 1 : 0)};
 `;
 
-const Overlay = styled.div<{ showing: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 333ms ease;
-  transform: translateY(${props => (props.showing ? "0" : "100%")});
-  opacity: ${props => (props.showing ? 1 : 0)};
-  pointer-events: ${props => (props.showing ? "unset" : "none")};
-`;
-
-const OverlayText = styled.span`
-  font-size: ${theme.font._16.size};
-  line-height: ${theme.font._16.lineHeight};
-  font-weight: ${theme.fontWeight._600};
-  color: ${theme.colors.link};
-`;
-
-const SuccessOverlay = styled(Overlay)`
-  background: green;
-`;
-
-const SuccessText = styled(OverlayText)`
-  color: ${theme.colors.white};
-`;
-
 const Input = styled.input`
   padding: ${theme.spacing._16} ${theme.spacing._20};
   border: 0;
@@ -61,6 +30,44 @@ const Input = styled.input`
 const SubmitButton = styled(ActionLink)`
   padding: ${theme.spacing._16} ${theme.spacing._20};
   cursor: pointer;
+`;
+
+const Overlay = styled.div<{ showing: boolean }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ${props => (props.onClick ? "pointer" : "unset")};
+  transition: all 333ms ease;
+  transform: translateY(${props => (props.showing ? "0" : "100%")});
+  opacity: ${props => (props.showing ? 1 : 0)};
+  pointer-events: ${props => (props.showing ? "unset" : "none")};
+`;
+
+const SuccessOverlay = styled(Overlay)`
+  background: green;
+`;
+
+const AddAppText = styled.span`
+  font-size: ${theme.font._16.size};
+  line-height: ${theme.font._16.lineHeight};
+  font-weight: ${theme.fontWeight._600};
+  color: ${theme.colors.link};
+`;
+
+const SuccessText = styled(AddAppText)`
+  color: ${theme.colors.white};
+`;
+
+const AlreadyAddedText = styled(AddAppText)`
+  color: ${theme.colors.disabledLinkText};
+  font-size: ${theme.font._14.size};
+  line-height: ${theme.font._14.lineHeight};
+  font-weight: ${theme.fontWeight._400};
 `;
 
 interface Props {
@@ -170,19 +177,21 @@ export class AddNew extends React.Component<Props, State> {
                 <SubmitButton onClick={state.submitForm}>Add App</SubmitButton>
               </Form>
               <SuccessOverlay showing={this.state.showSuccessOverlay}>
-                <SuccessText>App added!</SuccessText>
+                <SuccessText>App added</SuccessText>
               </SuccessOverlay>
               <Overlay
                 showing={
                   !this.state.showSuccessOverlay &&
                   (this.props.alreadyAdded || !formShowing)
                 }
-                onClick={this.showForm}
+                onClick={!this.props.alreadyAdded ? this.showForm : null}
               >
                 {this.props.alreadyAdded ? (
-                  <OverlayText>You've already added this app</OverlayText>
+                  <AlreadyAddedText>
+                    You have already added this app
+                  </AlreadyAddedText>
                 ) : (
-                  <OverlayText>Add this app</OverlayText>
+                  <AddAppText>Add this app</AddAppText>
                 )}
               </Overlay>
             </Wrapper>

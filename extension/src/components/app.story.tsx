@@ -2,6 +2,7 @@ import * as React from "react";
 import { App } from "./app";
 import { StoriesOf } from "../types";
 import { Fixtures } from "../api/fixtures";
+import { AddNew } from "./add-new";
 
 export default function button(s: StoriesOf) {
   s("App", module)
@@ -23,7 +24,7 @@ export default function button(s: StoriesOf) {
         />
       );
     })
-    .add("multiple", () => {
+    .add("list", () => {
       return (
         <>
           <App app={Fixtures.app()} />
@@ -38,6 +39,44 @@ export default function button(s: StoriesOf) {
             })}
           />
           <App app={Fixtures.app()} />
+        </>
+      );
+    })
+    .add("list with form at bottom", () => {
+      return (
+        <>
+          <App app={Fixtures.app()} />
+          <App app={Fixtures.app()} />
+          <App app={Fixtures.app()} />
+          <App
+            app={Fixtures.app({
+              icon:
+                "https://cdn4.iconfinder.com/data/icons/various-icons-2/476/Spotify.png",
+              name: "Spotify",
+              origin: "https://spotify.com"
+            })}
+          />
+          <App app={Fixtures.app()} />
+          <AddNew onSubmit={console.log} alreadyAdded={false} />
+        </>
+      );
+    })
+    .add("list with form already added at bottom", () => {
+      return (
+        <>
+          <App app={Fixtures.app()} />
+          <App app={Fixtures.app()} />
+          <App app={Fixtures.app()} />
+          <App
+            app={Fixtures.app({
+              icon:
+                "https://cdn4.iconfinder.com/data/icons/various-icons-2/476/Spotify.png",
+              name: "Spotify",
+              origin: "https://spotify.com"
+            })}
+          />
+          <App app={Fixtures.app()} />
+          <AddNew onSubmit={console.log} alreadyAdded={true} />
         </>
       );
     });

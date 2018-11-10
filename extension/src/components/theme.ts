@@ -13,6 +13,7 @@ export const theme = {
     form: "#ededef",
     link: "#309edc",
     avatarGradient: "linear-gradient(45deg, #1C0529 0%, #6C6794 100%)",
+    disabledLinkText: "#6C6794",
     _1: "#6C6794",
     _2: "#B8B8BD",
     _3: "#F2290D",
@@ -35,12 +36,18 @@ export const theme = {
       size: rem(12),
       lineHeight: rem(14)
     },
+    _14: {
+      size: rem(14),
+      lineHeight: rem(17)
+    },
     _16: {
       size: rem(16),
       lineHeight: rem(19)
     }
   },
   fontWeight: {
+    _300: "300",
+    _400: "400",
     _500: "500",
     _600: "600",
     bold: "bold"
