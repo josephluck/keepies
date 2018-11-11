@@ -30,7 +30,7 @@ export const Logo = styled.div`
 type IconSize = "large" | "medium" | "small";
 
 const IconWrap = styled.div<{ size: IconSize }>`
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   background: ${theme.colors.avatarGradient};

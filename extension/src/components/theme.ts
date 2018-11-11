@@ -34,23 +34,23 @@ export const theme = {
   iconLogo: {
     _128: {
       outer: rem(128),
-      inner: rem(94),
+      inner: rem(88),
       borderRadius: rem(10)
     },
     _48: {
       outer: rem(56),
-      inner: rem(42),
+      inner: rem(36),
       borderRadius: rem(6)
     },
     _16: {
       outer: rem(16),
-      inner: rem(10),
+      inner: rem(8),
       borderRadius: rem(3)
     }
   },
   size: {
     extension: "350px",
-    appIcon: rem(50)
+    appIcon: rem(40)
   },
   font: {
     base: "16px",

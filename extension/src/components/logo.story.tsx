@@ -11,7 +11,7 @@ export default function button(s: StoriesOf) {
         </LogoWrap>
       );
     })
-    .add("icons", () => {
+    .add("icons at all sizes", () => {
       return (
         <div style={{ padding: "20px" }}>
           <div style={{ marginBottom: "20px" }}>
@@ -25,5 +25,14 @@ export default function button(s: StoriesOf) {
           </div>
         </div>
       );
+    })
+    .add("icon large", () => {
+      return <Icon size="large" />;
+    })
+    .add("icon medium", () => {
+      return <Icon size="medium" />;
+    })
+    .add("icon small", () => {
+      return <Icon size="small" />;
     });
 }

@@ -18,7 +18,6 @@ const AppIcon = styled.div`
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
-  border-radius: ${theme.borderRadius.circle};
   overflow: hidden;
   flex: 0 0 auto;
   position: relative;
@@ -68,9 +67,12 @@ export function App({
   onRemove: () => any;
 }) {
   const initials = `${app.name.charAt(0)}${app.name.charAt(1)}`;
-  const iconStyle = app.icon
+  const iconStyle: React.CSSProperties = app.icon
     ? { backgroundImage: `url(${app.icon})` }
-    : { background: theme.colors.avatarGradient };
+    : {
+        background: theme.colors.avatarGradient,
+        borderRadius: theme.borderRadius.circle
+      };
   return (
     <Wrapper>
       <AppIcon style={iconStyle}>

@@ -53,9 +53,9 @@ function model(
       },
       async addApp(_state, actions, { name }) {
         const tab = await getCurrentTab();
-        storeApp({ origin: tab.url, icon: tab.favIconUrl, name })
-          .then(actions.syncSettings)
-          .then(requestKeepie);
+        storeApp({ origin: tab.url, icon: tab.favIconUrl, name }).then(
+          actions.syncSettings
+        );
       },
       removeApp(_state, actions, app) {
         removeApp(app).then(actions.syncSettings);
