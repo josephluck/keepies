@@ -32,8 +32,9 @@ export const theme = {
     _36: rem(36)
   },
   size: {
-    appIcon: rem(40),
-    extension: "400px"
+    appIcon: rem(128),
+    appIconInner: rem(94),
+    extension: "350px"
   },
   font: {
     base: "16px",
@@ -56,6 +57,10 @@ export const theme = {
     _24: {
       size: rem(24),
       lineHeight: rem(28)
+    },
+    _26: {
+      size: rem(26),
+      lineHeight: rem(30)
     }
   },
   fontWeight: {
