@@ -31,10 +31,26 @@ export const theme = {
     _20: rem(20),
     _36: rem(36)
   },
+  iconLogo: {
+    _128: {
+      outer: rem(128),
+      inner: rem(94),
+      borderRadius: rem(10)
+    },
+    _48: {
+      outer: rem(56),
+      inner: rem(42),
+      borderRadius: rem(6)
+    },
+    _16: {
+      outer: rem(16),
+      inner: rem(10),
+      borderRadius: rem(3)
+    }
+  },
   size: {
-    appIcon: rem(128),
-    appIconInner: rem(94),
-    extension: "350px"
+    extension: "350px",
+    appIcon: rem(50)
   },
   font: {
     base: "16px",

@@ -11,10 +11,18 @@ export default function button(s: StoriesOf) {
         </LogoWrap>
       );
     })
-    .add("icon", () => {
+    .add("icons", () => {
       return (
-        <div style={{ padding: "100px" }}>
-          <Icon />
+        <div style={{ padding: "20px" }}>
+          <div style={{ marginBottom: "20px" }}>
+            <Icon size="large" />
+          </div>
+          <div style={{ marginBottom: "20px" }}>
+            <Icon size="medium" />
+          </div>
+          <div style={{ marginBottom: "20px" }}>
+            <Icon size="small" />
+          </div>
         </div>
       );
     });

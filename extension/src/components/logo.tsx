@@ -27,22 +27,49 @@ export const Logo = styled.div`
   text-transform: uppercase;
 `;
 
-const IconWrap = styled.div`
+type IconSize = "large" | "medium" | "small";
+
+const IconWrap = styled.div<{ size: IconSize }>`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  font-size: ${theme.size.appIconInner};
-  line-height: ${theme.size.appIconInner};
   background: ${theme.colors.avatarGradient};
-  width: ${theme.size.appIcon};
-  height: ${theme.size.appIcon};
   color: ${theme.colors.white};
-  border-radius: 8%;
+  width: ${props =>
+    props.size === "small"
+      ? theme.iconLogo._16.outer
+      : props.size === "medium"
+      ? theme.iconLogo._48.outer
+      : theme.iconLogo._128.outer};
+  height: ${props =>
+    props.size === "small"
+      ? theme.iconLogo._16.outer
+      : props.size === "medium"
+      ? theme.iconLogo._48.outer
+      : theme.iconLogo._128.outer};
+  font-size: ${props =>
+    props.size === "small"
+      ? theme.iconLogo._16.inner
+      : props.size === "medium"
+      ? theme.iconLogo._48.inner
+      : theme.iconLogo._128.inner};
+  line-height: ${props =>
+    props.size === "small"
+      ? theme.iconLogo._16.inner
+      : props.size === "medium"
+      ? theme.iconLogo._48.inner
+      : theme.iconLogo._128.inner};
+  border-radius: ${props =>
+    props.size === "small"
+      ? theme.iconLogo._16.borderRadius
+      : props.size === "medium"
+      ? theme.iconLogo._48.borderRadius
+      : theme.iconLogo._128.borderRadius};
 `;
 
-export function Icon() {
+export function Icon({ size = "large" }: { size?: IconSize }) {
   return (
-    <IconWrap>
+    <IconWrap size={size}>
       <FontAwesomeIcon icon={faCamera} />
     </IconWrap>
   );
