@@ -1,6 +1,76 @@
 import { messageKeepieMade, messageRequestKeepie } from "./messages";
-import { getSettings } from "./api/sdk";
+import { getSettings, setSetting } from "./api/sdk";
 import { Models } from "./api/models";
+import { Fixtures } from "./api/fixtures";
+
+export function getCurrentTab(): Promise<chrome.tabs.Tab> {
+  return new Promise(resolve => {
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+      if (tabs.length) {
+        resolve(tabs[0]);
+      } else {
+        console.warn("Could not find a active tab in the current window");
+      }
+    });
+  });
+}
+
+export async function keepie() {
+  const settings = await getSettings();
+  const tab = await getCurrentTab();
+  const app = getAppFromUrl(settings, tab.url);
+  console.log("Starting keepie capture of", { app, tab });
+  if (app) {
+    chrome.tabs.captureVisibleTab(url => {
+      if (url) {
+        chrome.downloads.download(
+          {
+            filename: `${generateFileName(tab)}.jpeg`,
+            url
+          },
+          async () => {
+            await setSetting(
+              "apps",
+              settings.apps.map(a =>
+                a.origin === app.origin
+                  ? {
+                      ...a,
+                      lastKeepieOn: Date.now(),
+                      nextKeepieDue: Fixtures.nextKeepieDue()
+                    }
+                  : a
+              )
+            );
+            console.log("Keepie made, updating settings with new times", {
+              settings: await getSettings()
+            });
+            chrome.runtime.sendMessage(messageKeepieMade());
+          }
+        );
+      }
+    });
+  }
+}
+
+export async function takeDueKeepies() {
+  const settings = await getSettings();
+  const dueApps = settings.apps.filter(app => {
+    console.log("Determining if app is ready for keepie", {
+      app,
+      dueIn: `${(app.nextKeepieDue - Date.now()) / 1000}s`
+    });
+    return app.nextKeepieDue < Date.now();
+  });
+  console.log("Taking due keepies", { apps: settings.apps, dueApps });
+  dueApps.forEach(dueApp => {
+    console.log("Requesting keepie of due app", { dueApp });
+    keepie();
+  });
+}
+
+export function requestKeepie() {
+  chrome.runtime.sendMessage(messageRequestKeepie());
+}
 
 function replaceWhiteSpace(str) {
   return str
@@ -18,50 +88,8 @@ function generateFileName(tab: chrome.tabs.Tab): string {
     .toLowerCase();
 }
 
-function isUrlInApps(settings: Models.Settings, url: string): boolean {
-  return !!settings.apps.find(
+function getAppFromUrl(settings: Models.Settings, url: string): Models.App {
+  return settings.apps.find(
     app => url.includes(app.origin) || url === app.origin
   );
-}
-
-export function getCurrentTab(): Promise<chrome.tabs.Tab> {
-  return new Promise(resolve => {
-    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-      if (tabs.length) {
-        console.log("Active tab found");
-        resolve(tabs[0]);
-      } else {
-        console.log("No active tabs found");
-      }
-    });
-  });
-}
-
-export async function keepie() {
-  const settings = await getSettings();
-  const tab = await getCurrentTab();
-  if (isUrlInApps(settings, tab.url)) {
-    console.log("Current tab is in stored apps, creating Keepie");
-    chrome.tabs.captureVisibleTab(url => {
-      if (url) {
-        const downloadOpts = {
-          filename: `${generateFileName(tab)}.jpeg`,
-          url
-        };
-        console.log("Created Keepie, beginning to save to disk", downloadOpts);
-        chrome.downloads.download(downloadOpts, () => {
-          console.log("Keepie made and saved to disk");
-          chrome.runtime.sendMessage(messageKeepieMade());
-        });
-      } else {
-        console.log("No URL generated via captureVisibleTab");
-      }
-    });
-  } else {
-    console.log("Current tab is not in stored apps");
-  }
-}
-
-export function requestKeepie() {
-  chrome.runtime.sendMessage(messageRequestKeepie());
 }

@@ -3,6 +3,8 @@ export namespace Models {
     icon?: string;
     name: string;
     origin: string;
+    lastKeepieOn: number;
+    nextKeepieDue: number;
   }
 
   export type SettingsKeys = "apps";

@@ -16,6 +16,8 @@ export const theme = {
     disabledLinkText: "#6C6794",
     logoLeft: "#309edc",
     logoRight: "#1C0529",
+    progressBackground: "#ededef",
+    progressCircle: "#309edc",
     _1: "#6C6794",
     _2: "#B8B8BD",
     _3: "#F2290D",
@@ -50,7 +52,7 @@ export const theme = {
   },
   size: {
     extension: "350px",
-    appIcon: rem(40)
+    appIcon: 40
   },
   font: {
     base: "16px",

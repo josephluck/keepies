@@ -1,5 +1,6 @@
 import * as faker from "faker";
 import { Models } from "./models";
+import { addMinutes } from "date-fns";
 
 function app(override: Partial<Models.App> = {}): Models.App {
   return {
@@ -8,6 +9,8 @@ function app(override: Partial<Models.App> = {}): Models.App {
       : null,
     name: faker.lorem.word(),
     origin: faker.internet.url(),
+    lastKeepieOn: faker.date.past().getTime(),
+    nextKeepieDue: faker.date.future().getTime(),
     ...override
   };
 }
@@ -15,11 +18,18 @@ function app(override: Partial<Models.App> = {}): Models.App {
 function emptyApp(): Models.App {
   return {
     name: "",
-    origin: ""
+    origin: "",
+    lastKeepieOn: Date.now(),
+    nextKeepieDue: nextKeepieDue()
   };
+}
+
+function nextKeepieDue(): number {
+  return addMinutes(new Date(), 1).getTime();
 }
 
 export const Fixtures = {
   app,
-  emptyApp
+  emptyApp,
+  nextKeepieDue
 };

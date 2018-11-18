@@ -1,4 +1,4 @@
-export const ALARM_KEEPIE = "KEEPIE_KEEPIE";
+export const ALARM_POLL = "KEEPIE_KEEPIE";
 
 interface Message extends Record<string, any> {
   name: string;

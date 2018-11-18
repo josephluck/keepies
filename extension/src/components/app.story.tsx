@@ -25,11 +25,30 @@ export default function button(s: StoriesOf) {
         />
       );
     })
+    .add("codepen", () => {
+      return (
+        <App
+          onRemove={console.log}
+          app={Fixtures.app({
+            icon: "http://cdn.onlinewebfonts.com/svg/img_424372.png",
+            name: "Codepen",
+            origin: "https://codepen.io"
+          })}
+        />
+      );
+    })
     .add("list", () => {
       return (
         <>
           <App onRemove={console.log} app={Fixtures.app()} />
-          <App onRemove={console.log} app={Fixtures.app()} />
+          <App
+            onRemove={console.log}
+            app={Fixtures.app({
+              icon: "http://cdn.onlinewebfonts.com/svg/img_424372.png",
+              name: "Codepen",
+              origin: "https://codepen.io"
+            })}
+          />
           <App onRemove={console.log} app={Fixtures.app()} />
           <App
             onRemove={console.log}

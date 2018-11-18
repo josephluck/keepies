@@ -7,6 +7,6 @@
   "author": "Joseph Luck <joseph.luck@sky.com>",
   "license": "MIT",
   "workspaces": [
-    "extension/ui"
+    "extension"
   ]
 }

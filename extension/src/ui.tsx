@@ -4,7 +4,7 @@ import renderer from "helix-js/lib/renderers/react";
 import { getSettings, removeApp, storeApp } from "./api/sdk";
 import { getCurrentTab, requestKeepie } from "./keepie";
 import * as urlParse from "url-parse";
-import { messageActiveTabChanged } from "./messages";
+import { messageActiveTabChanged, messageKeepieMade } from "./messages";
 import { GlobalStyles, theme } from "./components/theme";
 import { Models } from "./api/models";
 import { App } from "./components/app";
@@ -115,8 +115,16 @@ getSettings().then(async settings => {
   app.actions.onActiveTabChanged();
 
   chrome.runtime.onMessage.addListener(async message => {
-    if (message.type === messageActiveTabChanged().name) {
-      app.actions.onActiveTabChanged();
+    if (message && message.name) {
+      if (message.name === messageActiveTabChanged().name) {
+        console.log("UI received active tab changed message");
+        app.actions.onActiveTabChanged();
+      }
+
+      if (message.name === messageKeepieMade().name) {
+        console.log("UI received keepie made message");
+        app.actions.syncSettings();
+      }
     }
   });
 });
