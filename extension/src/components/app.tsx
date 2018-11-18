@@ -37,14 +37,22 @@ const Labels = styled.div`
 
 export function App({
   app,
-  onRemove
+  onRemove,
+  onLogoClick,
+  disableOnLogoClick
 }: {
   app: Models.App;
   onRemove: () => any;
+  onLogoClick: () => any;
+  disableOnLogoClick: boolean;
 }) {
   return (
     <Wrapper>
-      <AppLogo app={app} />
+      <AppLogo
+        app={app}
+        onClick={onLogoClick}
+        disableOnClick={disableOnLogoClick}
+      />
       <Labels>
         <AppName>{app.name}</AppName>
         <AppOrigin>{app.origin}</AppOrigin>

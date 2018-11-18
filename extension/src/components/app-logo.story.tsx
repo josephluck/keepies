@@ -7,11 +7,28 @@ import { addSeconds } from "date-fns";
 export default function button(s: StoriesOf) {
   s("AppLogo", module)
     .add("default", () => {
-      return <AppLogo app={Fixtures.app()} />;
+      return (
+        <AppLogo
+          onClick={console.log}
+          disableOnClick={false}
+          app={Fixtures.app()}
+        />
+      );
+    })
+    .add("disabled on click", () => {
+      return (
+        <AppLogo
+          onClick={console.log}
+          disableOnClick={true}
+          app={Fixtures.app()}
+        />
+      );
     })
     .add("0% progress", () => {
       return (
         <AppLogo
+          onClick={console.log}
+          disableOnClick={false}
           app={Fixtures.app({
             lastKeepieOn: Date.now(),
             nextKeepieDue: addSeconds(new Date(), 10).getTime()
@@ -22,6 +39,8 @@ export default function button(s: StoriesOf) {
     .add("10% progress", () => {
       return (
         <AppLogo
+          onClick={console.log}
+          disableOnClick={false}
           app={Fixtures.app({
             lastKeepieOn: addSeconds(new Date(), -1).getTime(),
             nextKeepieDue: addSeconds(new Date(), 9).getTime()
@@ -32,6 +51,8 @@ export default function button(s: StoriesOf) {
     .add("20% progress", () => {
       return (
         <AppLogo
+          onClick={console.log}
+          disableOnClick={false}
           app={Fixtures.app({
             lastKeepieOn: addSeconds(new Date(), -2).getTime(),
             nextKeepieDue: addSeconds(new Date(), 8).getTime()
@@ -42,6 +63,8 @@ export default function button(s: StoriesOf) {
     .add("50% progress", () => {
       return (
         <AppLogo
+          onClick={console.log}
+          disableOnClick={false}
           app={Fixtures.app({
             lastKeepieOn: addSeconds(new Date(), -5).getTime(),
             nextKeepieDue: addSeconds(new Date(), 5).getTime()
@@ -52,6 +75,8 @@ export default function button(s: StoriesOf) {
     .add("90% progress", () => {
       return (
         <AppLogo
+          onClick={console.log}
+          disableOnClick={false}
           app={Fixtures.app({
             lastKeepieOn: addSeconds(new Date(), -9).getTime(),
             nextKeepieDue: addSeconds(new Date(), 1).getTime()

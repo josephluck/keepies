@@ -38,16 +38,25 @@ export const theme = {
   iconLogo: {
     _128: {
       outer: rem(128),
+      halfSize: rem(64),
       inner: rem(88),
       borderRadius: rem(10)
     },
     _48: {
       outer: rem(56),
+      halfSize: rem(28),
       inner: rem(36),
       borderRadius: rem(6)
     },
+    _22: {
+      outer: rem(22),
+      halfSize: rem(11),
+      inner: rem(14),
+      borderRadius: rem(4)
+    },
     _16: {
       outer: rem(16),
+      halfSize: rem(8),
       inner: rem(8),
       borderRadius: rem(3)
     }
@@ -58,6 +67,10 @@ export const theme = {
   },
   font: {
     base: "16px",
+    _10: {
+      size: rem(10),
+      lineHeight: rem(12)
+    },
     _12: {
       size: rem(12),
       lineHeight: rem(14)

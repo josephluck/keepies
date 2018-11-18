@@ -89,6 +89,8 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
             <App
               app={app}
               onRemove={() => actions.removeApp(app)}
+              onLogoClick={() => actions.takeKeepie()}
+              disableOnLogoClick={currentOrigin === app.origin}
               key={app.origin}
             />
           ))}

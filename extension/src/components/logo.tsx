@@ -27,7 +27,7 @@ export const Logo = styled.div`
   text-transform: uppercase;
 `;
 
-type IconSize = "large" | "medium" | "small";
+type IconSize = "large" | "medium" | "_22" | "small";
 
 const IconWrap = styled.div<{ size: IconSize }>`
   display: flex;
@@ -38,38 +38,54 @@ const IconWrap = styled.div<{ size: IconSize }>`
   width: ${props =>
     props.size === "small"
       ? theme.iconLogo._16.outer
+      : props.size === "_22"
+      ? theme.iconLogo._22.outer
       : props.size === "medium"
       ? theme.iconLogo._48.outer
       : theme.iconLogo._128.outer};
   height: ${props =>
     props.size === "small"
       ? theme.iconLogo._16.outer
+      : props.size === "_22"
+      ? theme.iconLogo._22.outer
       : props.size === "medium"
       ? theme.iconLogo._48.outer
       : theme.iconLogo._128.outer};
   font-size: ${props =>
     props.size === "small"
       ? theme.iconLogo._16.inner
+      : props.size === "_22"
+      ? theme.iconLogo._22.inner
       : props.size === "medium"
       ? theme.iconLogo._48.inner
       : theme.iconLogo._128.inner};
   line-height: ${props =>
     props.size === "small"
       ? theme.iconLogo._16.inner
+      : props.size === "_22"
+      ? theme.iconLogo._22.inner
       : props.size === "medium"
       ? theme.iconLogo._48.inner
       : theme.iconLogo._128.inner};
   border-radius: ${props =>
     props.size === "small"
       ? theme.iconLogo._16.borderRadius
+      : props.size === "_22"
+      ? theme.iconLogo._22.borderRadius
       : props.size === "medium"
       ? theme.iconLogo._48.borderRadius
       : theme.iconLogo._128.borderRadius};
 `;
 
-export function Icon({ size = "large" }: { size?: IconSize }) {
+export function Icon({
+  size = "large",
+  className = ""
+}: {
+  size?: IconSize;
+  className?: string;
+}) {
   return (
-    <IconWrap size={size}>
+    <IconWrap size={size} className={className}>
       <FontAwesomeIcon icon={faCamera} />
     </IconWrap>
   );

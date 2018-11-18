@@ -7,15 +7,41 @@ import { AddNew } from "./add-new";
 export default function button(s: StoriesOf) {
   s("App", module)
     .add("default", () => {
-      return <App onRemove={console.log} app={Fixtures.app()} />;
+      return (
+        <App
+          onRemove={console.log}
+          onLogoClick={console.log}
+          disableOnLogoClick={false}
+          app={Fixtures.app()}
+        />
+      );
     })
     .add("without image", () => {
-      return <App onRemove={console.log} app={Fixtures.app({ icon: null })} />;
+      return (
+        <App
+          onRemove={console.log}
+          onLogoClick={console.log}
+          disableOnLogoClick={false}
+          app={Fixtures.app({ icon: null })}
+        />
+      );
+    })
+    .add("disabled on logo click", () => {
+      return (
+        <App
+          onRemove={console.log}
+          onLogoClick={console.log}
+          disableOnLogoClick={true}
+          app={Fixtures.app()}
+        />
+      );
     })
     .add("spotify", () => {
       return (
         <App
           onRemove={console.log}
+          onLogoClick={console.log}
+          disableOnLogoClick={false}
           app={Fixtures.app({
             icon:
               "https://cdn4.iconfinder.com/data/icons/various-icons-2/476/Spotify.png",
@@ -29,6 +55,8 @@ export default function button(s: StoriesOf) {
       return (
         <App
           onRemove={console.log}
+          onLogoClick={console.log}
+          disableOnLogoClick={false}
           app={Fixtures.app({
             icon: "http://cdn.onlinewebfonts.com/svg/img_424372.png",
             name: "Codepen",
@@ -40,18 +68,32 @@ export default function button(s: StoriesOf) {
     .add("list", () => {
       return (
         <>
-          <App onRemove={console.log} app={Fixtures.app()} />
           <App
             onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
+            app={Fixtures.app()}
+          />
+          <App
+            onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
             app={Fixtures.app({
               icon: "http://cdn.onlinewebfonts.com/svg/img_424372.png",
               name: "Codepen",
               origin: "https://codepen.io"
             })}
           />
-          <App onRemove={console.log} app={Fixtures.app()} />
           <App
             onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
+            app={Fixtures.app()}
+          />
+          <App
+            onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
             app={Fixtures.app({
               icon:
                 "https://cdn4.iconfinder.com/data/icons/various-icons-2/476/Spotify.png",
@@ -59,18 +101,40 @@ export default function button(s: StoriesOf) {
               origin: "https://spotify.com"
             })}
           />
-          <App onRemove={console.log} app={Fixtures.app()} />
+          <App
+            onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
+            app={Fixtures.app()}
+          />
         </>
       );
     })
     .add("list with form at bottom", () => {
       return (
         <>
-          <App onRemove={console.log} app={Fixtures.app()} />
-          <App onRemove={console.log} app={Fixtures.app()} />
-          <App onRemove={console.log} app={Fixtures.app()} />
           <App
             onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
+            app={Fixtures.app()}
+          />
+          <App
+            onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
+            app={Fixtures.app()}
+          />
+          <App
+            onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
+            app={Fixtures.app()}
+          />
+          <App
+            onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
             app={Fixtures.app({
               icon:
                 "https://cdn4.iconfinder.com/data/icons/various-icons-2/476/Spotify.png",
@@ -78,7 +142,12 @@ export default function button(s: StoriesOf) {
               origin: "https://spotify.com"
             })}
           />
-          <App onRemove={console.log} app={Fixtures.app()} />
+          <App
+            onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
+            app={Fixtures.app()}
+          />
           <AddNew onSubmit={console.log} alreadyAdded={false} />
         </>
       );
@@ -86,11 +155,28 @@ export default function button(s: StoriesOf) {
     .add("list with form already added at bottom", () => {
       return (
         <>
-          <App onRemove={console.log} app={Fixtures.app()} />
-          <App onRemove={console.log} app={Fixtures.app()} />
-          <App onRemove={console.log} app={Fixtures.app()} />
           <App
             onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
+            app={Fixtures.app()}
+          />
+          <App
+            onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
+            app={Fixtures.app()}
+          />
+          <App
+            onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
+            app={Fixtures.app()}
+          />
+          <App
+            onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
             app={Fixtures.app({
               icon:
                 "https://cdn4.iconfinder.com/data/icons/various-icons-2/476/Spotify.png",
@@ -98,7 +184,12 @@ export default function button(s: StoriesOf) {
               origin: "https://spotify.com"
             })}
           />
-          <App onRemove={console.log} app={Fixtures.app()} />
+          <App
+            onRemove={console.log}
+            onLogoClick={console.log}
+            disableOnLogoClick={false}
+            app={Fixtures.app()}
+          />
           <AddNew onSubmit={console.log} alreadyAdded={true} />
         </>
       );
