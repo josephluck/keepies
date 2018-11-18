@@ -85,15 +85,17 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
       </LogoWrap>
       {state.settings ? (
         <Collapse isOpened>
-          {state.settings.apps.map(app => (
-            <App
-              app={app}
-              onRemove={() => actions.removeApp(app)}
-              onLogoClick={() => actions.takeKeepie()}
-              disableOnLogoClick={currentOrigin !== app.origin}
-              key={app.origin}
-            />
-          ))}
+          {state.settings.apps
+            .sort(app => (app.origin === currentOrigin ? -1 : 1))
+            .map(app => (
+              <App
+                app={app}
+                onRemove={() => actions.removeApp(app)}
+                onLogoClick={() => actions.takeKeepie()}
+                disableOnLogoClick={currentOrigin !== app.origin}
+                key={app.origin}
+              />
+            ))}
         </Collapse>
       ) : null}
       <AddNew
