@@ -5,8 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 
 export const LogoWrap = styled.div`
-  padding: ${theme.spacing._10} ${theme.spacing._20};
-  border-bottom: solid 1px ${theme.colors.border};
   text-align: center;
 `;
 
