@@ -49,7 +49,7 @@ const Overlay = styled.div<{ showing: boolean }>`
 `;
 
 const SuccessOverlay = styled(Overlay)`
-  background: green;
+  background: ${theme.colors.successOverlay};
 `;
 
 const AddAppText = styled.span`

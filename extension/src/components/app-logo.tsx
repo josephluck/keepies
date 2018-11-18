@@ -7,11 +7,12 @@ const svgSize = theme.size.appIcon;
 const progressBarThickness = 3;
 const circleRadius = theme.size.appIcon / 2 - progressBarThickness / 2;
 const circleCircumference = circleRadius * 2 * Math.PI;
+const logoPadding = progressBarThickness * 3;
 
 const AppIconOuter = styled.div`
   width: ${theme.size.appIcon}px;
   height: ${theme.size.appIcon}px;
-  padding: ${progressBarThickness * 2}px;
+  padding: ${logoPadding}px;
   position: relative;
   margin-right: ${theme.spacing._16};
   background: ${theme.colors.progressBackground};
@@ -20,8 +21,8 @@ const AppIconOuter = styled.div`
 `;
 
 const AppIcon = styled.div`
-  width: ${theme.size.appIcon - progressBarThickness * 4}px;
-  height: ${theme.size.appIcon - progressBarThickness * 4}px;
+  width: ${theme.size.appIcon - logoPadding * 2}px;
+  height: ${theme.size.appIcon - logoPadding * 2}px;
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
@@ -52,11 +53,14 @@ const AppProgressSvg = styled.svg`
   height: ${svgSize}px;
 `;
 
-const ProgressCircle = styled.circle`
-  transition: 1s stroke-dashoffset linear;
+const ProgressCircle = styled.circle<{ ready: boolean }>`
+  transition: 1s all linear;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
-  stroke: ${theme.colors.progressCircle};
+  stroke: ${props =>
+    props.ready
+      ? theme.colors.progressCircleReady
+      : theme.colors.progressCircle};
   fill: transparent;
   stroke-width: ${progressBarThickness};
   stroke-dasharray: ${circleCircumference} ${circleCircumference};
@@ -66,6 +70,7 @@ function AppProgress({ percentage }: { percentage: number }) {
   return (
     <AppProgressSvg>
       <ProgressCircle
+        ready={percentage >= 99}
         style={{
           strokeDashoffset:
             circleCircumference - (percentage / 100) * circleCircumference
