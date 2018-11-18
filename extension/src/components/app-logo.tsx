@@ -18,7 +18,7 @@ const circleRadius = theme.size.appIcon / 2 - progressBarThickness / 2;
 const circleCircumference = circleRadius * 2 * Math.PI;
 const logoPadding = progressBarThickness * 2;
 
-const AppIcon = styled.div`
+export const AppIcon = styled.div`
   width: ${theme.size.appIcon - logoPadding * 2}px;
   height: ${theme.size.appIcon - logoPadding * 2}px;
   background-size: contain;

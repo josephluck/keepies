@@ -10,6 +10,7 @@ import { Collapse } from "react-collapse";
 import styled from "styled-components";
 import { Heading } from "./views/heading";
 import { Apps } from "./views/apps";
+import { Settings } from "./views/settings";
 
 const Extension = styled.div`
   width: ${theme.size.extension};
@@ -86,7 +87,7 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
         {state.view === "apps" && state.settings ? (
           <Apps state={state} actions={actions} />
         ) : state.view === "settings" ? (
-          <div>Settings</div>
+          <Settings state={state} actions={actions} />
         ) : null}
       </Collapse>
     </Extension>

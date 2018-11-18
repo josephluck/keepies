@@ -30,6 +30,7 @@ export const theme = {
   },
   spacing: {
     _4: rem(4),
+    _8: rem(8),
     _10: rem(10),
     _16: rem(16),
     _20: rem(20),
@@ -69,11 +70,11 @@ export const theme = {
     base: "16px",
     _10: {
       size: rem(10),
-      lineHeight: rem(12)
+      lineHeight: rem(13)
     },
     _12: {
       size: rem(12),
-      lineHeight: rem(14)
+      lineHeight: rem(15)
     },
     _14: {
       size: rem(14),
