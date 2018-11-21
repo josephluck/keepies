@@ -2,8 +2,6 @@ import * as urlParse from "url-parse";
 import { Models } from "./models";
 import { Fixtures } from "./fixtures";
 
-const settingsKeys: Models.SettingsKeys[] = ["apps"];
-
 export function setSetting<K extends Models.SettingsKeys>(
   key: K,
   value: Models.Settings[K]
@@ -21,7 +19,7 @@ export function setSetting<K extends Models.SettingsKeys>(
 
 function getAllSettings(): Promise<Models.Settings> {
   return new Promise(resolve => {
-    chrome.storage.sync.get(settingsKeys, settings => {
+    chrome.storage.sync.get(null, settings => {
       console.log("Retrieved settings", { settings });
       resolve(settings as Models.Settings);
     });
@@ -59,4 +57,51 @@ export async function removeApp(app: Models.App): Promise<Models.Settings> {
   const settings = await getAllSettings();
   console.log("Removed app", { app, settings });
   return settings;
+}
+
+const CALLBACK_URL = `https://${chrome.runtime.id}.chromiumapp.org`; // NB: https://developer.chrome.com/apps/identity#method-launchWebAuthFlow
+const CLIENT_ID = "7580b5cc47edf068d121"; // NB: this is the github app client id available here: https://github.com/settings/applications/938404
+const AUTH_URL = `https://github.com/login/oauth/authorize/?client_id=${CLIENT_ID}&redirect_uri=${CALLBACK_URL}&scope=repo`;
+
+export async function authenticateWithGitHub(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    chrome.identity.launchWebAuthFlow(
+      {
+        url: AUTH_URL,
+        interactive: true
+      },
+      async redirectURL => {
+        const query = redirectURL.substr(redirectURL.indexOf("#") + 1);
+        const parts = query.split("&");
+        const accessTokenQueryString = parts.find(part => {
+          const kv = part.split("=");
+          return kv[0] === "access_token";
+        });
+        if (accessTokenQueryString) {
+          const token = accessTokenQueryString.split("=")[1];
+          if (token) {
+            await setSetting("gitHubToken", token);
+          }
+          resolve(token);
+        } else {
+          reject("GitHub authentication failed");
+        }
+      }
+    );
+  }) as any;
+}
+
+export async function getGitHubRepositories(
+  gitHubToken: string
+): Promise<Models.Repository[]> {
+  console.log("Should fetch github repositories with", { gitHubToken });
+  const request = await fetch("https://api.github.com/user/repos", {
+    method: "GET",
+    headers: new Headers({
+      Authorization: `token ${gitHubToken}`
+    })
+  });
+  const response = await request.json();
+  console.log("Got github repositories", { response });
+  return response;
 }

@@ -42,7 +42,7 @@ export function Settings({
       <SettingsListItem>
         <SettingsHeadingWrap>
           <Heading1>GitHub</Heading1>
-          <ActionLink>Setup</ActionLink>
+          <ActionLink onClick={actions.startGitHubAuth}>Setup</ActionLink>
         </SettingsHeadingWrap>
         <TertiaryTextWithSpace>
           Setup an integration with GitHub to automatically backup keepies to a

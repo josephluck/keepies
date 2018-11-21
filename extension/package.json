@@ -6,6 +6,7 @@
   "scripts": {
     "build": "rm -rf ./build && webpack && yarn copy-static",
     "dev": "webpack --watch",
+    "bundle": "npm run build && zip -r ./bundle.zip build",
     "copy-static": "cp -r ./src/build/ ./",
     "storybook": "start-storybook --quiet -p 6006 -s ./",
     "build-storybook": "build-storybook"

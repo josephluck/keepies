@@ -7,9 +7,13 @@ export namespace Models {
     nextKeepieDue: number;
   }
 
-  export type SettingsKeys = "apps";
+  export type SettingsKeys = "apps" | "gitHubToken";
 
   export interface Settings extends Record<SettingsKeys, any> {
     apps: Models.App[];
+    gitHubToken: null | string;
   }
+
+  // TODO
+  export interface Repository {}
 }

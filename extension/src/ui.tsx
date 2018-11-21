@@ -1,7 +1,12 @@
 import * as React from "react";
 import helix, { Helix } from "helix-js";
 import renderer from "helix-js/lib/renderers/react";
-import { getSettings, removeApp, storeApp } from "./api/sdk";
+import {
+  getSettings,
+  removeApp,
+  storeApp,
+  authenticateWithGitHub
+} from "./api/sdk";
 import { getCurrentTab, requestKeepie } from "./keepie";
 import { messageActiveTabChanged, messageKeepieMade } from "./messages";
 import { GlobalStyles, theme } from "./components/theme";
@@ -36,6 +41,8 @@ interface Effects {
   removeApp: Helix.Effect<State, Actions, Models.App>;
   takeKeepie: Helix.Effect0<State, Actions>;
   onActiveTabChanged: Helix.Effect0<State, Actions>;
+  startGitHubAuth: Helix.Effect0<State, Actions>;
+  syncGithubRepositories: Helix.Effect0<State, Actions>;
 }
 
 export type Actions = Helix.Actions<Reducers, Effects>;
@@ -56,7 +63,9 @@ function model(
     },
     effects: {
       syncSettings(_state, actions) {
-        getSettings().then(actions.storeSettings);
+        getSettings()
+          .then(actions.storeSettings)
+          .then(actions.syncGithubRepositories);
       },
       addApp(_state, actions, { name }) {
         getCurrentTab().then(tab =>
@@ -73,6 +82,15 @@ function model(
       },
       onActiveTabChanged(_state, actions) {
         getCurrentTab().then(actions.setCurrentTab);
+      },
+      startGitHubAuth(_state, actions) {
+        authenticateWithGitHub().then(actions.syncSettings);
+      },
+      syncGithubRepositories(state, actions) {
+        if (state.settings.gitHubToken) {
+        } else {
+          console.log("No github token");
+        }
       }
     }
   };
@@ -90,6 +108,8 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
           <Settings state={state} actions={actions} />
         ) : null}
       </Collapse>
+      {chrome.runtime.id}
+      {JSON.stringify(state.settings)}
     </Extension>
   );
 };
