@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "rm -rf ./build && webpack && yarn copy-static",
+    "dev": "webpack --watch",
     "copy-static": "cp -r ./src/build/ ./",
     "storybook": "start-storybook --quiet -p 6006 -s ./",
     "build-storybook": "build-storybook"

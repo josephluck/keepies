@@ -10,3 +10,8 @@ export const ActionLink = styled.span`
   cursor: ${props => (props.onClick ? "pointer" : "unset")};
   white-space: nowrap;
 `;
+
+export const ActionAnchor = styled(ActionLink.withComponent("a"))`
+  text-decoration: none;
+  cursor: pointer;
+`;

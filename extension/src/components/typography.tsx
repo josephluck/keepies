@@ -19,6 +19,10 @@ export const TertiaryText = styled(CopyText)`
   color: ${theme.colors.disabledLinkText};
 `;
 
+export const BoldTertiaryText = styled(TertiaryText)`
+  font-weight: ${theme.fontWeight._500};
+`;
+
 export const StrongCopyText = styled(CopyText)`
   font-weight: ${theme.fontWeight.bold};
 `;

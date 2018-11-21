@@ -58,7 +58,9 @@ export function Heading({
     <HeadingWrap>
       <Box flex={1} />
       <LogoWrap>
-        <Logo>Keepies</Logo>
+        <a href="https://github.com/josephluck/keepies" target="_blank">
+          <Logo>Keepies</Logo>
+        </a>
       </LogoWrap>
       <HeadingIconsWrap
         onClick={() =>
