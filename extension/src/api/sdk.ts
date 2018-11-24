@@ -59,7 +59,7 @@ export async function removeApp(app: Models.App): Promise<Models.Settings> {
   return settings;
 }
 
-const CALLBACK_URL = `https://${chrome.runtime.id}.chromiumapp.org`; // NB: https://developer.chrome.com/apps/identity#method-launchWebAuthFlow
+const CALLBACK_URL = chrome.identity.getRedirectURL(); // NB: https://developer.chrome.com/apps/identity#method-launchWebAuthFlow
 const CLIENT_ID = "7580b5cc47edf068d121"; // NB: this is the github app client id available here: https://github.com/settings/applications/938404
 const AUTH_URL = `https://github.com/login/oauth/authorize/?client_id=${CLIENT_ID}&redirect_uri=${CALLBACK_URL}&scope=repo`;
 
