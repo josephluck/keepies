@@ -25,7 +25,7 @@ The extension is published as a chrome webstore product. It can be updated here:
 
 https://chrome.google.com/webstore/developer/dashboard
 
-> Note that the extensions public key can be found here. When developing locally a base64 encoded versin of the public key can be used as the `key` property in `manifest.json`. This trick allows redirect URLs from `chrome.launchWebAuthFlow` [More reading](https://developer.chrome.com/apps/identity#method-launchWebAuthFlow) to direct to the "Unpacked" extension in development mode. **Note** it's super important that this key is removed before updating the public extension on the chrome store.
+> Note that the extensions public key can be found here. When developing locally a base64 encoded version of the public key can be used as the `key` property in `manifest.json`. This trick allows redirect URLs from `chrome.launchWebAuthFlow` ([more reading](https://developer.chrome.com/apps/identity#method-launchWebAuthFlow)) to direct to the "Unpacked" extension in development mode. **Note** it's super important that this key is removed before updating the public extension on the chrome store.
 
 ### GitHub OAuth application
 
