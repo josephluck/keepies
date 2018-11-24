@@ -4,6 +4,8 @@ Keepies is a browser extension that periodically captures screenshots of your ap
 
 The name keepie refers to "keep" and "keepie uppie" and functions as the terminology for a single screenshot taken by the extension.
 
+[Developer documentation](./DEVELOPMENT.md)
+
 # Functionality
 
 At the time of writing, it's unclear whether the functionality detailed below is even possible.
