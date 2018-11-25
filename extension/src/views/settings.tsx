@@ -37,7 +37,11 @@ export function Settings({
   actions: Actions;
   state: State;
 }) {
-  const { gitHubAuthenticationToken, chosenGitHubSyncRepo } = state.settings;
+  const {
+    gitHubAuthenticationToken,
+    chosenGitHubSyncRepo,
+    gitHubDirectoryName
+  } = state.settings;
   return (
     <>
       <SettingsListItem>
@@ -58,8 +62,9 @@ export function Settings({
         <BoldTertiaryText>
           {gitHubAuthenticationToken && chosenGitHubSyncRepo ? (
             <>
-              Keepies is currently syncing to{" "}
+              Keepies is currently syncing to
               <RepoLabel>{chosenGitHubSyncRepo.name}</RepoLabel>
+              in directory <RepoLabel>{gitHubDirectoryName}</RepoLabel>
             </>
           ) : gitHubAuthenticationToken ? (
             'You have given Keepies access to GitHub but you haven\'t chosen a GitHub repository to sync with yet. Choose one by visiting the "Settings" menu above.'

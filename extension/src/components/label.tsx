@@ -15,5 +15,5 @@ export const Label = styled.div`
 `;
 
 export const RepoLabel = styled(Label)`
-  margin-left: ${theme.spacing._2};
+  margin: 0 ${theme.spacing._2};
 `;
