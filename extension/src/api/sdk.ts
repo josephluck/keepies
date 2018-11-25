@@ -89,6 +89,12 @@ export async function authenticateWithGitHub() {
   return await authenticateWithGitHubOAuthApplication();
 }
 
+export async function removeGitHubIntegration() {
+  await setSetting("chosenGitHubSyncRepo", null);
+  await setSetting("gitHubAuthenticationToken", null);
+  return await getSettings();
+}
+
 async function authenticateWithGitHubOAuthApplication(): Promise<string> {
   // NB: https://developer.chrome.com/apps/identity#method-launchWebAuthFlow
   const CALLBACK_URL = chrome.identity.getRedirectURL();
@@ -167,3 +173,5 @@ function parseRedirectFragment(fragment): Record<string, string> {
 
   return values;
 }
+
+// NB: to create a file in git... http://www.levibotelho.com/development/commit-a-file-with-the-github-api/

@@ -7,7 +7,8 @@ import {
   storeApp,
   authenticateWithGitHub,
   getGitHubRepositories,
-  storeChosenGitHubRepository
+  storeChosenGitHubRepository,
+  removeGitHubIntegration
 } from "./api/sdk";
 import { getCurrentTab, requestKeepie } from "./keepie";
 import { messageActiveTabChanged, messageKeepieMade } from "./messages";
@@ -53,6 +54,7 @@ interface Effects {
   syncGithubRepositories: Helix.Effect0<State, Actions>;
   goToView: Helix.Effect<State, Actions, Views>;
   storeChosenGitHubRepository: Helix.Effect<State, Actions, number>;
+  removeGitHubIntegration: Helix.Effect0<State, Actions>;
 }
 
 export type Actions = Helix.Actions<Reducers, Effects>;
@@ -154,6 +156,13 @@ function model(
         storeChosenGitHubRepository(repository)
           .then(actions.syncSettings)
           .then(() => actions.setView("settings"));
+      },
+      removeGitHubIntegration(_state, actions) {
+        removeGitHubIntegration().then(() => {
+          actions.storeGitHubRepositories([]);
+          actions.storeChosenGitHubRepository(0);
+          actions.setView("settings");
+        });
       }
     }
   };

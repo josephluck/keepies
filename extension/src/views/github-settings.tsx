@@ -1,6 +1,6 @@
 import * as React from "react";
 import { State, Actions } from "../ui";
-import { ChooseRepo } from "../components/choose-repo";
+import { GitHubSettingsForm } from "../components/github-settings-form";
 
 export function GitHubSettings({
   actions,
@@ -11,7 +11,7 @@ export function GitHubSettings({
 }) {
   return (
     <>
-      <ChooseRepo
+      <GitHubSettingsForm
         repositories={state.gitHubRepositories}
         isLoading={state.loading.gitHubRepositories}
         initialValues={{
@@ -22,6 +22,7 @@ export function GitHubSettings({
         onSubmit={values =>
           actions.storeChosenGitHubRepository(values.repositoryId)
         }
+        removeGitHubIntegration={actions.removeGitHubIntegration}
       />
     </>
   );

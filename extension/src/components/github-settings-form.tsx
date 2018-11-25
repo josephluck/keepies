@@ -7,6 +7,7 @@ import { theme } from "./theme";
 import { Heading1, TertiaryText } from "./typography";
 import { SettingsHeadingWrap } from "../views/settings";
 import { AddAppText, SubmitFooter } from "./inline-form";
+import { ActionLink } from "./action-link";
 
 const FormWrapper = styled.div`
   background: ${theme.colors.white};
@@ -14,6 +15,7 @@ const FormWrapper = styled.div`
 
 const FormSection = styled.div`
   padding: ${theme.spacing._16} ${theme.spacing._20};
+  border-bottom: solid 1px ${theme.colors.border};
 `;
 
 const TertiaryTextWithSpace = styled(TertiaryText)`
@@ -21,27 +23,50 @@ const TertiaryTextWithSpace = styled(TertiaryText)`
   margin-bottom: ${theme.spacing._8};
 `;
 
+const RemoveIntegrationConfirmationWrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 interface Props {
   onSubmit: (fields: Fields) => any;
   repositories: Models.Repository[];
   initialValues: Fields;
   isLoading: boolean;
+  removeGitHubIntegration: () => void;
 }
 
-interface State {}
+interface State {
+  removeIntegrationConfirmationShowing: boolean;
+}
 
 interface Fields {
   repositoryId: number;
 }
 
-export class ChooseRepo extends React.Component<Props, State> {
+export class GitHubSettingsForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      removeIntegrationConfirmationShowing: false
+    };
   }
 
   onSubmit = (values: Fields) => {
     this.props.onSubmit(values);
+  };
+
+  showRemoveIntegrationConfirmation = () => {
+    this.setState({
+      removeIntegrationConfirmationShowing: true
+    });
+  };
+
+  hideRemoveIntegrationConfirmation = () => {
+    this.setState({
+      removeIntegrationConfirmationShowing: false
+    });
   };
 
   render() {
@@ -71,7 +96,7 @@ export class ChooseRepo extends React.Component<Props, State> {
               >
                 <FormSection>
                   <SettingsHeadingWrap>
-                    <Heading1>GitHub repository</Heading1>
+                    <Heading1>Repository</Heading1>
                   </SettingsHeadingWrap>
                   <TertiaryTextWithSpace>
                     Choose which GitHub repository you would like to sync
@@ -96,6 +121,48 @@ export class ChooseRepo extends React.Component<Props, State> {
                       );
                     }}
                   />
+                </FormSection>
+
+                <FormSection>
+                  <SettingsHeadingWrap>
+                    <Heading1>Directory</Heading1>
+                  </SettingsHeadingWrap>
+                  <TertiaryTextWithSpace>
+                    Choose a directory name you would like Keepies to store
+                    images to. Defaults to keepies.
+                  </TertiaryTextWithSpace>
+                </FormSection>
+
+                <FormSection>
+                  <SettingsHeadingWrap>
+                    <Heading1>Remove</Heading1>
+                  </SettingsHeadingWrap>
+                  <TertiaryTextWithSpace>
+                    Had enough of the GitHub integration? You can remove it
+                    below.
+                  </TertiaryTextWithSpace>
+                  <RemoveIntegrationConfirmationWrap>
+                    {this.state.removeIntegrationConfirmationShowing ? (
+                      <>
+                        <ActionLink
+                          onClick={this.props.removeGitHubIntegration}
+                        >
+                          Yes, remove
+                        </ActionLink>
+                        <ActionLink
+                          onClick={this.hideRemoveIntegrationConfirmation}
+                        >
+                          No, go back
+                        </ActionLink>
+                      </>
+                    ) : (
+                      <ActionLink
+                        onClick={this.showRemoveIntegrationConfirmation}
+                      >
+                        Remove GitHub integration
+                      </ActionLink>
+                    )}
+                  </RemoveIntegrationConfirmationWrap>
                 </FormSection>
                 <SubmitFooter onClick={state.submitForm}>
                   <AddAppText>Save settings</AddAppText>
