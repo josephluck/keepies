@@ -3,6 +3,7 @@ import { Radio } from "./radio";
 import styled from "styled-components";
 import { theme } from "./theme";
 import { Label } from "./label";
+import { Loading } from "./loading";
 
 const RadioListWrapper = styled.div`
   border: solid 1px ${theme.colors.border};
@@ -37,27 +38,37 @@ interface Option {
 export function RadioList({
   value,
   options,
-  onChange
+  onChange,
+  isLoading,
+  loadingText
 }: {
   value: string | number;
   options: Option[];
   onChange: (value: string | number) => void;
+  isLoading: boolean;
+  loadingText: React.ReactNode;
 }) {
   return (
     <RadioListWrapper>
-      {options.map(option => (
-        <OptionWrapper
-          key={option.value}
-          label={
-            <OptionLabelWrapper>
-              {option.label}
-              {option.value === value ? <Label>Chosen</Label> : null}
-            </OptionLabelWrapper>
-          }
-          isChecked={option.value === value}
-          onChange={() => onChange(option.value)}
-        />
-      ))}
+      {isLoading ? (
+        <Loading>{loadingText}</Loading>
+      ) : (
+        <>
+          {options.map(option => (
+            <OptionWrapper
+              key={option.value}
+              label={
+                <OptionLabelWrapper>
+                  {option.label}
+                  {option.value === value ? <Label>Chosen</Label> : null}
+                </OptionLabelWrapper>
+              }
+              isChecked={option.value === value}
+              onChange={() => onChange(option.value)}
+            />
+          ))}
+        </>
+      )}
     </RadioListWrapper>
   );
 }

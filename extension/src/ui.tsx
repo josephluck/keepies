@@ -25,12 +25,14 @@ const Extension = styled.div`
 `;
 
 type Views = "apps" | "settings" | "gitHubSettings";
+type LoadingKeys = "gitHubRepositories" | "gitHubAuthentication";
 
 export interface State {
   settings: null | Models.Settings;
   tab: null | chrome.tabs.Tab;
   view: Views;
   gitHubRepositories: Models.Repository[];
+  loading: Record<LoadingKeys, boolean>;
 }
 
 interface Reducers {
@@ -38,6 +40,7 @@ interface Reducers {
   setCurrentTab: Helix.Reducer<State, chrome.tabs.Tab>;
   setView: Helix.Reducer<State, Views>;
   storeGitHubRepositories: Helix.Reducer<State, Models.Repository[]>;
+  setLoading: Helix.Reducer<State, { key: LoadingKeys; isLoading: boolean }>;
 }
 
 interface Effects {
@@ -62,7 +65,11 @@ function model(
       settings,
       tab: null,
       view: "apps",
-      gitHubRepositories: []
+      gitHubRepositories: [],
+      loading: {
+        gitHubRepositories: false,
+        gitHubAuthentication: false
+      }
     },
     reducers: {
       storeSettings: (state, settings) => ({ ...state, settings }),
@@ -71,6 +78,13 @@ function model(
       storeGitHubRepositories: (state, gitHubRepositories) => ({
         ...state,
         gitHubRepositories
+      }),
+      setLoading: (state, { key, isLoading }) => ({
+        ...state,
+        loading: {
+          ...state.loading,
+          [key]: isLoading
+        }
       })
     },
     effects: {
@@ -96,14 +110,20 @@ function model(
         getCurrentTab().then(actions.setCurrentTab);
       },
       startGitHubAuth(_state, actions) {
+        actions.setLoading({ key: "gitHubAuthentication", isLoading: true });
         authenticateWithGitHub()
           .then(actions.syncSettings)
           .then(actions.syncGithubRepositories)
-          .then(() => actions.setView("gitHubSettings"));
+          .then(() => {
+            actions.setLoading({
+              key: "gitHubAuthentication",
+              isLoading: false
+            });
+            actions.setView("gitHubSettings");
+          });
       },
       goToView(state, actions, view) {
         actions.setView(view);
-
         if (
           view === "gitHubSettings" &&
           state.settings.gitHubAuthenticationToken
@@ -113,7 +133,15 @@ function model(
       },
       syncGithubRepositories(state, actions) {
         if (state.settings.gitHubAuthenticationToken) {
-          getGitHubRepositories().then(actions.storeGitHubRepositories);
+          actions.setLoading({ key: "gitHubRepositories", isLoading: true });
+          getGitHubRepositories()
+            .then(actions.storeGitHubRepositories)
+            .then(() => {
+              actions.setLoading({
+                key: "gitHubRepositories",
+                isLoading: false
+              });
+            });
         } else {
           console.log("No github token");
         }

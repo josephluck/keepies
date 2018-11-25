@@ -25,6 +25,7 @@ interface Props {
   onSubmit: (fields: Fields) => any;
   repositories: Models.Repository[];
   initialValues: Fields;
+  isLoading: boolean;
 }
 
 interface State {}
@@ -89,6 +90,8 @@ export class ChooseRepo extends React.Component<Props, State> {
                           onChange={repositoryId => {
                             form.setFieldValue("repositoryId", repositoryId);
                           }}
+                          isLoading={this.props.isLoading}
+                          loadingText="Loading repositories"
                         />
                       );
                     }}

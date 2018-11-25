@@ -13,6 +13,7 @@ export function GitHubSettings({
     <>
       <ChooseRepo
         repositories={state.gitHubRepositories}
+        isLoading={state.loading.gitHubRepositories}
         initialValues={{
           repositoryId: state.settings.chosenGitHubSyncRepo
             ? state.settings.chosenGitHubSyncRepo.id
