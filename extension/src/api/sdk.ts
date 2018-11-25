@@ -1,6 +1,7 @@
 import * as urlParse from "url-parse";
 import { Models } from "./models";
 import { Fixtures } from "./fixtures";
+import { env } from "../env";
 
 export function setSetting<K extends Models.SettingsKeys>(
   key: K,
@@ -59,15 +60,18 @@ export async function removeApp(app: Models.App): Promise<Models.Settings> {
   return settings;
 }
 
-const CALLBACK_URL = chrome.identity.getRedirectURL(); // NB: https://developer.chrome.com/apps/identity#method-launchWebAuthFlow
-const CLIENT_ID = "7580b5cc47edf068d121"; // NB: this is the github app client id available here: https://github.com/settings/applications/938404
-const AUTH_URL = `https://github.com/login/oauth/authorize/?client_id=${CLIENT_ID}&redirect_uri=${CALLBACK_URL}&scope=repo`;
-
+// NB: this should first check if there's a GitHub token in settings
 export async function authenticateWithGitHub(): Promise<string> {
+  const CALLBACK_URL = chrome.identity.getRedirectURL(); // NB: https://developer.chrome.com/apps/identity#method-launchWebAuthFlow
+  const GITHUB_OAUTH_APP_ID = env.GITHUB_OAUTH_APP_ID; // NB: this is the github app client id available here: https://github.com/settings/applications/938404
+  const GITHUB_AUTH_URL = `https://github.com/login/oauth/authorize/?client_id=${GITHUB_OAUTH_APP_ID}&redirect_uri=${encodeURIComponent(
+    CALLBACK_URL
+  )}&scope=repo`;
+
   return new Promise((resolve, reject) => {
     chrome.identity.launchWebAuthFlow(
       {
-        url: AUTH_URL,
+        url: GITHUB_AUTH_URL,
         interactive: true
       },
       async redirectURL => {

@@ -4,10 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "rm -rf ./build && webpack && yarn copy-static",
-    "dev": "webpack --watch",
-    "bundle": "npm run build && zip -r ./bundle.zip build",
-    "copy-static": "cp -r ./src/build/ ./",
+    "build:production": "webpack --env.NODE_ENV=production --env.GITHUB_OAUTH_APP_ID=6e5328caad28839db452",
+    "dev": "webpack --watch --env.NODE_ENV=development --env.GITHUB_OAUTH_APP_ID=7580b5cc47edf068d121 --env.EXTENSION_ID=TUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUEzcWJhRU1HempsMHY3eDc5c0JlWQpMeTdmUDF0c1IxcjNJRjVtYUxTclh0Tktlcjh4T1Fra3hlRWxCdm5iS3BKY2tHUmk1dU50MEQ5akdDbmszVm1sCnFWdU1Qajh3OHVPM2hFaXNIbU1nNHMreWFmR2Q5b1JCNmNVbEl6Ujk2aDBvT284bzN1QjlXYmcwYmVSM3RpZjcKTkFLOTh4dGZQZW0vSWVIcWU0YnVXeUZIS0QzSXpTLzNhRWUrSzhOVGZnc1BBb1JVZ21ISjE3Z3pwUWZCVFBSUgpGYjA0L0JvSUIwSE83b2dMRy9ob2JpYkE5YXY2VXN1VnAzaGJVYTlhVUtNZlJ1bDFORkRNRW05RlpwemRjVzdaCnVBdmZ5L2gyaUJtRlZqZkI4ckI2ZmhFUWxDSkh1amVOMmNKUkdmMVBsem5EVUhNcTdhVUM1R1NscjYyMnVONHUKUndJREFRQUI=",
+    "bundle": "npm run build:production && zip -r ./bundle.zip build",
     "storybook": "start-storybook --quiet -p 6006 -s ./",
     "build-storybook": "build-storybook"
   },
@@ -23,6 +22,7 @@
     "@types/storybook__react": "^4.0.0",
     "@types/url-parse": "^1.4.1",
     "awesome-typescript-loader": "^5.2.1",
+    "copy-webpack-plugin": "^4.6.0",
     "date-fns": "^1.29.0",
     "faker": "^4.1.0",
     "formik": "^1.3.1",

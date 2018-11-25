@@ -9,6 +9,8 @@
     "tabs",
     "downloads",
     "storage",
+    "*://*.google.com/*",
+    "*://*.github.com/*",
     "<all_urls>"
   ],
   "background": {
