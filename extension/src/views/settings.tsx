@@ -88,10 +88,10 @@ export function Settings({
             Report
           </ActionAnchor>
         </SettingsHeadingWrap>
-        <TertiaryTextWithSpace>
+        <TertiaryText>
           If something isn't quite right or you think Keepies is missing
           something, please file an issue.
-        </TertiaryTextWithSpace>
+        </TertiaryText>
       </SettingsListItem>
     </>
   );

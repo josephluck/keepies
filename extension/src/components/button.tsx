@@ -3,14 +3,14 @@ import { theme } from "./theme";
 
 const BaseButton = styled.button`
   background: transparent;
-  width: 100%;
   outline: none;
   padding: ${theme.spacing._10} ${theme.spacing._16};
   border-radius: ${theme.borderRadius._3};
   border: none;
   font-weight: ${theme.fontWeight._600};
-  text-transform: uppercase;
   white-space: nowrap;
+  cursor: ${props =>
+    props.disabled ? "not-allowed" : props.onClick ? "pointer" : "default"};
 `;
 
 export const PrimaryButton = styled(BaseButton)`

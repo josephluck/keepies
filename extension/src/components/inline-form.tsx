@@ -45,6 +45,15 @@ export const Overlay = styled.div<{ showing: boolean }>`
   pointer-events: ${props => (props.showing ? "unset" : "none")};
 `;
 
+export const SubmitFooter = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ${props => (props.onClick ? "pointer" : "unset")};
+  background: ${theme.colors.form};
+  padding: ${theme.spacing._16} ${theme.spacing._20};
+`;
+
 export const SuccessOverlay = styled(Overlay)`
   background: ${theme.colors.successOverlay};
 `;

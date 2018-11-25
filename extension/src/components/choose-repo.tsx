@@ -4,17 +4,16 @@ import { Models } from "../api/models";
 import { RadioList } from "./radio-list";
 import styled from "styled-components";
 import { theme } from "./theme";
-import { PrimaryButton } from "./button";
 import { Heading1, TertiaryText } from "./typography";
 import { SettingsHeadingWrap } from "../views/settings";
+import { AddAppText, SubmitFooter } from "./inline-form";
 
 const FormWrapper = styled.div`
-  padding: ${theme.spacing._16} ${theme.spacing._20};
   background: ${theme.colors.white};
 `;
 
-const FormFieldSpacer = styled.div`
-  margin-bottom: ${theme.spacing._16};
+const FormSection = styled.div`
+  padding: ${theme.spacing._16} ${theme.spacing._20};
 `;
 
 const TertiaryTextWithSpace = styled(TertiaryText)`
@@ -69,14 +68,14 @@ export class ChooseRepo extends React.Component<Props, State> {
                   state.handleSubmit(e);
                 }}
               >
-                <SettingsHeadingWrap>
-                  <Heading1>GitHub repository</Heading1>
-                </SettingsHeadingWrap>
-                <TertiaryTextWithSpace>
-                  Choose which GitHub repository you would like to sync Keepies
-                  to.
-                </TertiaryTextWithSpace>
-                <FormFieldSpacer>
+                <FormSection>
+                  <SettingsHeadingWrap>
+                    <Heading1>GitHub repository</Heading1>
+                  </SettingsHeadingWrap>
+                  <TertiaryTextWithSpace>
+                    Choose which GitHub repository you would like to sync
+                    Keepies to.
+                  </TertiaryTextWithSpace>
                   <Field
                     name="repositoryId"
                     render={({ field, form }: FieldProps<Fields>) => {
@@ -94,10 +93,10 @@ export class ChooseRepo extends React.Component<Props, State> {
                       );
                     }}
                   />
-                </FormFieldSpacer>
-                <PrimaryButton onClick={state.submitForm} type="button">
-                  Save
-                </PrimaryButton>
+                </FormSection>
+                <SubmitFooter onClick={state.submitForm}>
+                  <AddAppText>Save settings</AddAppText>
+                </SubmitFooter>
               </form>
             </FormWrapper>
           );
