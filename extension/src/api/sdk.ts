@@ -105,6 +105,7 @@ export async function syncKeepieWithGitHub(
   fileName: string,
   fileContents: string
 ) {
+  console.log("Beginning keepie sync with github", { fileName });
   const settings = await getSettings();
   const repos = await getGitHubRepositories();
   const repo = repos.find(repo => repo.id === settings.chosenGitHubSyncRepo.id);
@@ -118,12 +119,14 @@ export async function syncKeepieWithGitHub(
     token,
     branchName
   );
+  console.log({ currentBranchCommitSHA });
   const currentBranchTreeSHA = await getCurrentTreeSHA(
     username,
     repo.name,
     token,
     currentBranchCommitSHA
   );
+  console.log({ currentBranchTreeSHA });
   const file = await createFile(
     username,
     repo.name,
@@ -131,6 +134,7 @@ export async function syncKeepieWithGitHub(
     fileName,
     fileContents
   );
+  console.log({ file });
   const newCommitTreeSHA = await createTree(
     username,
     repo.name,
@@ -138,15 +142,19 @@ export async function syncKeepieWithGitHub(
     file,
     currentBranchTreeSHA
   );
+  console.log({ newCommitTreeSHA });
   const commitSHA = await createCommit(
     username,
     repo.name,
     token,
     `:camera: Keepie`,
-    currentBranchTreeSHA,
+    currentBranchCommitSHA,
     newCommitTreeSHA
   );
-  return updateHead(username, repo.name, token, branchName, commitSHA);
+  console.log({ commitSHA });
+  await updateHead(username, repo.name, token, branchName, commitSHA);
+
+  console.log("Finished keepie sync with github");
 }
 
 async function getCurrentCommitSHA(
@@ -159,7 +167,7 @@ async function getCurrentCommitSHA(
     `https://api.github.com/repos/${username}/${repoName}/git/refs/heads/${currentBranchName}?access_token=${token}`
   );
   const ref = await request.json();
-  return ref.data.object.sha;
+  return ref.object.sha;
 }
 
 async function getCurrentTreeSHA(
@@ -172,7 +180,7 @@ async function getCurrentTreeSHA(
     `https://api.github.com/repos/${username}/${repoName}/git/commits/${currentBranchCommitSHA}?access_token=${token}`
   );
   const commit = await request.json();
-  return commit.data.tree.sha;
+  return commit.tree.sha;
 }
 
 interface GitHubFile {
@@ -195,14 +203,15 @@ async function createFile(
     {
       method: "POST",
       body: JSON.stringify({
-        content: fileContents
+        content: fileContents,
+        encoding: "base64" // For images
       })
     }
   );
   const blob = await request.json();
 
   return {
-    sha: blob.data.sha,
+    sha: blob.sha,
     path: `${gitHubDirectoryName}/${fileName}`,
     mode: "100644", // simple file: https://developer.github.com/v3/git/trees/#create-a-tree
     type: "blob"
@@ -227,7 +236,7 @@ async function createTree(
     }
   );
   const tree = await request.json();
-  return tree.data.sha;
+  return tree.sha;
 }
 
 async function createCommit(
@@ -245,13 +254,13 @@ async function createCommit(
       body: JSON.stringify({
         message,
         tree: newCommitTreeSha,
-        parents: currentBranchCommitSHA
+        parents: [currentBranchCommitSHA]
       })
     }
   );
 
   const commit = await request.json();
-  return commit.data.sha;
+  return commit.sha;
 }
 
 async function updateHead(
@@ -262,7 +271,7 @@ async function updateHead(
   newCommitSHA: string
 ) {
   const request = await fetch(
-    `https://api.github.com/repos/${username}/${repoName}/git/refs/heads?access_token=${token}`,
+    `https://api.github.com/repos/${username}/${repoName}/git/refs/heads/${currentBranchName}?access_token=${token}`,
     {
       method: "POST",
       body: JSON.stringify({
