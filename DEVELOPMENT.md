@@ -31,7 +31,15 @@ https://chrome.google.com/webstore/developer/dashboard
 
 The GitHub OAuth extension is used to authorise GitHub repository access to the Keepie extension. The keys are available here:
 
+#### Production
+
 https://github.com/settings/applications/938404
+
+#### Development
+
+https://github.com/settings/applications/939974
+
+> Note that the "Authorization callback URL" must be set to the extensions published URL. This can be found at the [chrome extension dashboard](https://chrome.google.com/webstore/developer/dashboard) and is made up as so: https://<chrome-extension-id>.chromiumapp.org/
 
 ### Chrome authentication keys
 

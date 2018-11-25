@@ -10,6 +10,7 @@ import {
   BoldTertiaryText
 } from "../components/typography";
 import { ActionLink, ActionAnchor } from "../components/action-link";
+import { Flex } from "@rebass/grid";
 
 const SettingsListItem = styled(ListItem)`
   flex-direction: column;
@@ -29,6 +30,16 @@ const TertiaryTextWithSpace = styled(TertiaryText)`
   margin-bottom: ${theme.spacing._8};
 `;
 
+const RepoLabel = styled.div`
+  display: inline-block;
+  border: solid 2px ${theme.colors.border};
+  padding: ${theme.spacing._2};
+  font-size: ${theme.font._12.size};
+  line-height: ${theme.font._12.lineHeight};
+  font-weight: ${theme.fontWeight._600};
+  color: ${theme.colors.label};
+`;
+
 export function Settings({
   actions,
   state
@@ -36,20 +47,35 @@ export function Settings({
   actions: Actions;
   state: State;
 }) {
-  console.log({ actions, state });
+  const { gitHubAuthenticationToken, chosenGitHubSyncRepo } = state.settings;
   return (
     <>
       <SettingsListItem>
         <SettingsHeadingWrap>
           <Heading1>GitHub</Heading1>
-          <ActionLink onClick={actions.startGitHubAuth}>Setup</ActionLink>
+          {gitHubAuthenticationToken ? (
+            <ActionLink onClick={() => actions.goToView("gitHubSettings")}>
+              Settings
+            </ActionLink>
+          ) : (
+            <ActionLink onClick={actions.startGitHubAuth}>Setup</ActionLink>
+          )}
         </SettingsHeadingWrap>
         <TertiaryTextWithSpace>
           Setup an integration with GitHub to automatically backup keepies to a
           git repository.
         </TertiaryTextWithSpace>
         <BoldTertiaryText>
-          You haven't set up an integration with GitHub yet.
+          {gitHubAuthenticationToken && chosenGitHubSyncRepo ? (
+            <Flex alignItems="center">
+              Keepies is currently syncing to{" "}
+              <RepoLabel>{chosenGitHubSyncRepo.name}</RepoLabel>
+            </Flex>
+          ) : gitHubAuthenticationToken ? (
+            'You have given Keepies access to GitHub but you haven\'t chosen a GitHub repository to sync with yet. Choose one by visiting the "Settings" menu above.'
+          ) : (
+            "You haven't set up an integration with GitHub yet."
+          )}
         </BoldTertiaryText>
       </SettingsListItem>
       <SettingsListItem>

@@ -63,15 +63,21 @@ export function Heading({
         </a>
       </LogoWrap>
       <HeadingIconsWrap
-        onClick={() =>
-          actions.setView(state.view === "apps" ? "settings" : "apps")
-        }
+        onClick={() => {
+          actions.goToView(
+            state.view === "apps"
+              ? "settings"
+              : state.view === "settings"
+              ? "apps"
+              : "settings"
+          );
+        }}
       >
         <IconWrap>
           <HeadingIcon inView={state.view === "apps"}>
             <FontAwesomeIcon icon={faCog} />
           </HeadingIcon>
-          <CloseIcon inView={state.view === "settings"}>
+          <CloseIcon inView={state.view !== "apps"}>
             <FontAwesomeIcon icon={faTimes} />
           </CloseIcon>
         </IconWrap>

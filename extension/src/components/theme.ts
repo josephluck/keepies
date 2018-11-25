@@ -20,6 +20,7 @@ export const theme = {
     progressBackground: "#ededef",
     progressCircle: "#309edc",
     progressCircleReady: "#BABD39",
+    label: "309edc",
     _1: "#6C6794",
     _2: "#B8B8BD",
     _3: "#F2290D",
@@ -29,6 +30,7 @@ export const theme = {
     _7: "#309edc"
   },
   spacing: {
+    _2: rem(2),
     _4: rem(4),
     _8: rem(8),
     _10: rem(10),

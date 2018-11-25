@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build:production": "webpack --env.NODE_ENV=production --env.GITHUB_OAUTH_APP_ID=6e5328caad28839db452",
-    "dev": "webpack --watch --env.NODE_ENV=development --env.GITHUB_OAUTH_APP_ID=7580b5cc47edf068d121 --env.EXTENSION_ID=TUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUEzcWJhRU1HempsMHY3eDc5c0JlWQpMeTdmUDF0c1IxcjNJRjVtYUxTclh0Tktlcjh4T1Fra3hlRWxCdm5iS3BKY2tHUmk1dU50MEQ5akdDbmszVm1sCnFWdU1Qajh3OHVPM2hFaXNIbU1nNHMreWFmR2Q5b1JCNmNVbEl6Ujk2aDBvT284bzN1QjlXYmcwYmVSM3RpZjcKTkFLOTh4dGZQZW0vSWVIcWU0YnVXeUZIS0QzSXpTLzNhRWUrSzhOVGZnc1BBb1JVZ21ISjE3Z3pwUWZCVFBSUgpGYjA0L0JvSUIwSE83b2dMRy9ob2JpYkE5YXY2VXN1VnAzaGJVYTlhVUtNZlJ1bDFORkRNRW05RlpwemRjVzdaCnVBdmZ5L2gyaUJtRlZqZkI4ckI2ZmhFUWxDSkh1amVOMmNKUkdmMVBsem5EVUhNcTdhVUM1R1NscjYyMnVONHUKUndJREFRQUI=",
+    "build:production": "webpack --env.NODE_ENV=production --env.GITHUB_OAUTH_APP_ID=7580b5cc47edf068d121 --env.GITHUB_OAUTH_APP_SECRET=48a5b819a562a601616931dd684c1ea8a534fea5",
+    "dev": "webpack --watch --env.NODE_ENV=development --env.GITHUB_OAUTH_APP_ID=6e5328caad28839db452 --env.GITHUB_OAUTH_APP_SECRET=fbe7c0f013fd41eb9b345a1c72abc87fef29b4ba --env.EXTENSION_ID=TUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUEzcWJhRU1HempsMHY3eDc5c0JlWQpMeTdmUDF0c1IxcjNJRjVtYUxTclh0Tktlcjh4T1Fra3hlRWxCdm5iS3BKY2tHUmk1dU50MEQ5akdDbmszVm1sCnFWdU1Qajh3OHVPM2hFaXNIbU1nNHMreWFmR2Q5b1JCNmNVbEl6Ujk2aDBvT284bzN1QjlXYmcwYmVSM3RpZjcKTkFLOTh4dGZQZW0vSWVIcWU0YnVXeUZIS0QzSXpTLzNhRWUrSzhOVGZnc1BBb1JVZ21ISjE3Z3pwUWZCVFBSUgpGYjA0L0JvSUIwSE83b2dMRy9ob2JpYkE5YXY2VXN1VnAzaGJVYTlhVUtNZlJ1bDFORkRNRW05RlpwemRjVzdaCnVBdmZ5L2gyaUJtRlZqZkI4ckI2ZmhFUWxDSkh1amVOMmNKUkdmMVBsem5EVUhNcTdhVUM1R1NscjYyMnVONHUKUndJREFRQUI=",
     "bundle": "npm run build:production && zip -r ./bundle.zip build",
     "storybook": "start-storybook --quiet -p 6006 -s ./",
     "build-storybook": "build-storybook"

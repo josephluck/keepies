@@ -5,7 +5,8 @@ import {
   getSettings,
   removeApp,
   storeApp,
-  authenticateWithGitHub
+  authenticateWithGitHub,
+  getGitHubRepositories
 } from "./api/sdk";
 import { getCurrentTab, requestKeepie } from "./keepie";
 import { messageActiveTabChanged, messageKeepieMade } from "./messages";
@@ -21,18 +22,20 @@ const Extension = styled.div`
   width: ${theme.size.extension};
 `;
 
-type Views = "apps" | "settings";
+type Views = "apps" | "settings" | "gitHubSettings";
 
 export interface State {
   settings: null | Models.Settings;
   tab: null | chrome.tabs.Tab;
   view: Views;
+  gitHubRepositories: Models.Repository[];
 }
 
 interface Reducers {
   storeSettings: Helix.Reducer<State, Models.Settings>;
   setCurrentTab: Helix.Reducer<State, chrome.tabs.Tab>;
   setView: Helix.Reducer<State, Views>;
+  storeGitHubRepositories: Helix.Reducer<State, Models.Repository[]>;
 }
 
 interface Effects {
@@ -43,6 +46,7 @@ interface Effects {
   onActiveTabChanged: Helix.Effect0<State, Actions>;
   startGitHubAuth: Helix.Effect0<State, Actions>;
   syncGithubRepositories: Helix.Effect0<State, Actions>;
+  goToView: Helix.Effect<State, Actions, Views>;
 }
 
 export type Actions = Helix.Actions<Reducers, Effects>;
@@ -54,12 +58,17 @@ function model(
     state: {
       settings,
       tab: null,
-      view: "apps"
+      view: "apps",
+      gitHubRepositories: []
     },
     reducers: {
       storeSettings: (state, settings) => ({ ...state, settings }),
       setCurrentTab: (state, tab) => ({ ...state, tab }),
-      setView: (state, view) => ({ ...state, view })
+      setView: (state, view) => ({ ...state, view }),
+      storeGitHubRepositories: (state, gitHubRepositories) => ({
+        ...state,
+        gitHubRepositories
+      })
     },
     effects: {
       syncSettings(_state, actions) {
@@ -84,10 +93,24 @@ function model(
         getCurrentTab().then(actions.setCurrentTab);
       },
       startGitHubAuth(_state, actions) {
-        authenticateWithGitHub().then(actions.syncSettings);
+        authenticateWithGitHub()
+          .then(actions.syncSettings)
+          .then(actions.syncGithubRepositories)
+          .then(() => actions.setView("gitHubSettings"));
+      },
+      goToView(state, actions, view) {
+        actions.setView(view);
+
+        if (
+          view === "gitHubSettings" &&
+          state.settings.gitHubAuthenticationToken
+        ) {
+          actions.syncGithubRepositories();
+        }
       },
       syncGithubRepositories(state, actions) {
-        if (state.settings.gitHubToken) {
+        if (state.settings.gitHubAuthenticationToken) {
+          getGitHubRepositories().then(actions.storeGitHubRepositories);
         } else {
           console.log("No github token");
         }
@@ -106,10 +129,10 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
           <Apps state={state} actions={actions} />
         ) : state.view === "settings" ? (
           <Settings state={state} actions={actions} />
+        ) : state.view === "gitHubSettings" ? (
+          <GitHubSettings state={state} actions={actions} />
         ) : null}
       </Collapse>
-      {chrome.runtime.id}
-      {JSON.stringify(state.settings)}
     </Extension>
   );
 };

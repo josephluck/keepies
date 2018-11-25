@@ -20,6 +20,7 @@ export function setSetting<K extends Models.SettingsKeys>(
 
 function getAllSettings(): Promise<Models.Settings> {
   return new Promise(resolve => {
+    // NB: null gets all settings
     chrome.storage.sync.get(null, settings => {
       console.log("Retrieved settings", { settings });
       resolve(settings as Models.Settings);
@@ -60,13 +61,35 @@ export async function removeApp(app: Models.App): Promise<Models.Settings> {
   return settings;
 }
 
-// NB: this should first check if there's a GitHub token in settings
-export async function authenticateWithGitHub(): Promise<string> {
-  const CALLBACK_URL = chrome.identity.getRedirectURL(); // NB: https://developer.chrome.com/apps/identity#method-launchWebAuthFlow
-  const GITHUB_OAUTH_APP_ID = env.GITHUB_OAUTH_APP_ID; // NB: this is the github app client id available here: https://github.com/settings/applications/938404
-  const GITHUB_AUTH_URL = `https://github.com/login/oauth/authorize/?client_id=${GITHUB_OAUTH_APP_ID}&redirect_uri=${encodeURIComponent(
-    CALLBACK_URL
-  )}&scope=repo`;
+export async function getGitHubRepositories(): Promise<Models.Repository[]> {
+  const { gitHubAuthenticationToken } = await getSettings();
+  console.log("Fetch user's GitHub repositories with", {
+    gitHubAuthenticationToken
+  });
+  const request = await fetch(
+    `https://api.github.com/user/repos?access_token=${gitHubAuthenticationToken}`,
+    {
+      method: "GET"
+    }
+  );
+  const response = await request.json();
+  console.log("Got user's GitHub repositories", { response });
+  return response;
+}
+
+export async function authenticateWithGitHub() {
+  return await authenticateWithGitHubOAuthApplication();
+}
+
+async function authenticateWithGitHubOAuthApplication(): Promise<string> {
+  // NB: https://developer.chrome.com/apps/identity#method-launchWebAuthFlow
+  const CALLBACK_URL = chrome.identity.getRedirectURL();
+  // NB: used to test whether the callback URL from GitHub is correct
+  const callbackMatcher = new RegExp(CALLBACK_URL + "[#?](.*)");
+  // NB: this is the github app client id available here: https://github.com/settings/applications/938404
+  const GITHUB_OAUTH_APP_ID = env.GITHUB_OAUTH_APP_ID;
+  // NB: https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/#redirect-urls
+  const GITHUB_AUTH_URL = `https://github.com/login/oauth/authorize?client_id=${GITHUB_OAUTH_APP_ID}&redirect_uri=${CALLBACK_URL}&scope=repo`;
 
   return new Promise((resolve, reject) => {
     chrome.identity.launchWebAuthFlow(
@@ -75,37 +98,64 @@ export async function authenticateWithGitHub(): Promise<string> {
         interactive: true
       },
       async redirectURL => {
-        const query = redirectURL.substr(redirectURL.indexOf("#") + 1);
-        const parts = query.split("&");
-        const accessTokenQueryString = parts.find(part => {
-          const kv = part.split("=");
-          return kv[0] === "access_token";
-        });
-        if (accessTokenQueryString) {
-          const token = accessTokenQueryString.split("=")[1];
-          if (token) {
-            await setSetting("gitHubToken", token);
+        const matches = redirectURL.match(callbackMatcher);
+        if (matches && matches.length > 1) {
+          const { code } = parseRedirectFragment(matches[1]);
+          if (code) {
+            // NB: github only gave us a access token - exchange it for an authentication token
+            const accessToken = await exchangeGitHubAccessTokenForAuthToken(
+              code
+            );
+            await setSetting("gitHubAuthenticationToken", accessToken);
+            resolve(accessToken);
+          } else {
+            reject("Invalid redirectURL provided by GitHub");
           }
-          resolve(token);
         } else {
-          reject("GitHub authentication failed");
+          reject("Invalid redirectURL provided by GitHub");
         }
       }
     );
   }) as any;
 }
 
-export async function getGitHubRepositories(
-  gitHubToken: string
-): Promise<Models.Repository[]> {
-  console.log("Should fetch github repositories with", { gitHubToken });
-  const request = await fetch("https://api.github.com/user/repos", {
-    method: "GET",
-    headers: new Headers({
-      Authorization: `token ${gitHubToken}`
-    })
+async function exchangeGitHubAccessTokenForAuthToken(
+  accessCode: string
+): Promise<string> {
+  return new Promise(async (resolve, reject) => {
+    console.log("Exchanging GitHub access token for authentication token", {
+      accessCode
+    });
+    // NB: https://developer.chrome.com/apps/identity#method-launchWebAuthFlow
+    const CALLBACK_URL = chrome.identity.getRedirectURL();
+    // NB: these are GitHub app ids available here: https://github.com/settings/applications/938404
+    const GITHUB_OAUTH_APP_ID = env.GITHUB_OAUTH_APP_ID;
+    const GITHUB_OAUTH_APP_SECRET = env.GITHUB_OAUTH_APP_SECRET;
+    // NB: this is the GitHub API for exchanging an access token for an auth token
+    const GITHUB_AUTH_URL = `https://github.com/login/oauth/access_token?client_id=${GITHUB_OAUTH_APP_ID}&client_secret=${GITHUB_OAUTH_APP_SECRET}&redirect_uri=${CALLBACK_URL}&code=${accessCode}`;
+    const request = await fetch(GITHUB_AUTH_URL, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    const { access_token } = await request.json();
+    if (!access_token) {
+      reject("No access_token provided by GitHub");
+    }
+    resolve(access_token);
+  }) as any;
+}
+
+function parseRedirectFragment(fragment): Record<string, string> {
+  let pairs = fragment.split(/&/);
+  let values = {};
+
+  pairs.forEach(pair => {
+    const key = pair.split(/=/);
+    values[key[0]] = key[1];
   });
-  const response = await request.json();
-  console.log("Got github repositories", { response });
-  return response;
+
+  return values;
 }
