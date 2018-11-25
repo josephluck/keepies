@@ -10,14 +10,14 @@ import {
   BoldTertiaryText
 } from "../components/typography";
 import { ActionLink, ActionAnchor } from "../components/action-link";
-import { Flex } from "@rebass/grid";
+import { RepoLabel } from "../components/label";
 
 const SettingsListItem = styled(ListItem)`
   flex-direction: column;
   align-items: flex-start;
 `;
 
-const SettingsHeadingWrap = styled.div`
+export const SettingsHeadingWrap = styled.div`
   margin-bottom: ${theme.spacing._8};
   width: 100%;
   display: flex;
@@ -25,19 +25,9 @@ const SettingsHeadingWrap = styled.div`
   justify-content: space-between;
 `;
 
-const TertiaryTextWithSpace = styled(TertiaryText)`
+export const TertiaryTextWithSpace = styled(TertiaryText)`
   display: block;
   margin-bottom: ${theme.spacing._8};
-`;
-
-const RepoLabel = styled.div`
-  display: inline-block;
-  border: solid 2px ${theme.colors.border};
-  padding: ${theme.spacing._2};
-  font-size: ${theme.font._12.size};
-  line-height: ${theme.font._12.lineHeight};
-  font-weight: ${theme.fontWeight._600};
-  color: ${theme.colors.label};
 `;
 
 export function Settings({
@@ -67,10 +57,10 @@ export function Settings({
         </TertiaryTextWithSpace>
         <BoldTertiaryText>
           {gitHubAuthenticationToken && chosenGitHubSyncRepo ? (
-            <Flex alignItems="center">
+            <>
               Keepies is currently syncing to{" "}
               <RepoLabel>{chosenGitHubSyncRepo.name}</RepoLabel>
-            </Flex>
+            </>
           ) : gitHubAuthenticationToken ? (
             'You have given Keepies access to GitHub but you haven\'t chosen a GitHub repository to sync with yet. Choose one by visiting the "Settings" menu above.'
           ) : (

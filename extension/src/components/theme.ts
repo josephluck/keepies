@@ -20,7 +20,9 @@ export const theme = {
     progressBackground: "#ededef",
     progressCircle: "#309edc",
     progressCircleReady: "#BABD39",
-    label: "309edc",
+    label: "#309edc",
+    radioCheckedBorder: "#309edc",
+    radioUncheckedBorder: "#1C0529",
     _1: "#6C6794",
     _2: "#B8B8BD",
     _3: "#F2290D",
@@ -66,7 +68,8 @@ export const theme = {
   },
   size: {
     extension: "350px",
-    appIcon: 40
+    appIcon: 40,
+    radio: rem(16)
   },
   font: {
     base: "16px",

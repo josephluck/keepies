@@ -1,74 +1,17 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import styled from "styled-components";
-import { theme } from "./theme";
 import { Formik, Field, FieldProps } from "formik";
-import { ActionLink } from "./action-link";
-
-const Wrapper = styled.div`
-  background: ${theme.colors.form};
-  position: relative;
-  overflow: hidden;
-`;
-
-const Form = styled.form<{ showing: boolean }>`
-  display: flex;
-  align-items: center;
-  transition: all 333ms ease;
-  transform: translateY(${props => (props.showing ? "0" : "-100%")});
-  opacity: ${props => (props.showing ? 1 : 0)};
-`;
-
-const Input = styled.input`
-  padding: ${theme.spacing._16} ${theme.spacing._20};
-  border: 0;
-  flex: 1;
-  background: transparent;
-  outline: none;
-`;
-
-const SubmitButton = styled(ActionLink)`
-  padding: ${theme.spacing._16} ${theme.spacing._20};
-  cursor: pointer;
-`;
-
-const Overlay = styled.div<{ showing: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: ${props => (props.onClick ? "pointer" : "unset")};
-  transition: all 333ms ease;
-  transform: translateY(${props => (props.showing ? "0" : "100%")});
-  opacity: ${props => (props.showing ? 1 : 0)};
-  pointer-events: ${props => (props.showing ? "unset" : "none")};
-`;
-
-const SuccessOverlay = styled(Overlay)`
-  background: ${theme.colors.successOverlay};
-`;
-
-const AddAppText = styled.span`
-  font-size: ${theme.font._16.size};
-  line-height: ${theme.font._16.lineHeight};
-  font-weight: ${theme.fontWeight._600};
-  color: ${theme.colors.link};
-`;
-
-const SuccessText = styled(AddAppText)`
-  color: ${theme.colors.white};
-`;
-
-const AlreadyAddedText = styled(AddAppText)`
-  color: ${theme.colors.disabledLinkText};
-  font-size: ${theme.font._14.size};
-  line-height: ${theme.font._14.lineHeight};
-  font-weight: ${theme.fontWeight._400};
-`;
+import {
+  FormWrapper,
+  Form,
+  Input,
+  SubmitButton,
+  SuccessOverlay,
+  SuccessText,
+  Overlay,
+  AlreadyAddedText,
+  AddAppText
+} from "./inline-form";
 
 interface Props {
   onSubmit: (name) => any;
@@ -156,7 +99,7 @@ export class AddNew extends React.Component<Props, State> {
             !this.state.showSuccessOverlay &&
             (this.state.formFocussed || state.values.name.length > 0);
           return (
-            <Wrapper>
+            <FormWrapper>
               <Form onSubmit={state.handleSubmit} showing={formShowing}>
                 <Field
                   name="name"
@@ -195,7 +138,7 @@ export class AddNew extends React.Component<Props, State> {
                   <AddAppText>Add this app</AddAppText>
                 )}
               </Overlay>
-            </Wrapper>
+            </FormWrapper>
           );
         }}
       </Formik>

@@ -6,7 +6,8 @@ import {
   removeApp,
   storeApp,
   authenticateWithGitHub,
-  getGitHubRepositories
+  getGitHubRepositories,
+  storeChosenGitHubRepository
 } from "./api/sdk";
 import { getCurrentTab, requestKeepie } from "./keepie";
 import { messageActiveTabChanged, messageKeepieMade } from "./messages";
@@ -17,6 +18,7 @@ import styled from "styled-components";
 import { Heading } from "./views/heading";
 import { Apps } from "./views/apps";
 import { Settings } from "./views/settings";
+import { GitHubSettings } from "./views/github-settings";
 
 const Extension = styled.div`
   width: ${theme.size.extension};
@@ -47,6 +49,7 @@ interface Effects {
   startGitHubAuth: Helix.Effect0<State, Actions>;
   syncGithubRepositories: Helix.Effect0<State, Actions>;
   goToView: Helix.Effect<State, Actions, Views>;
+  storeChosenGitHubRepository: Helix.Effect<State, Actions, number>;
 }
 
 export type Actions = Helix.Actions<Reducers, Effects>;
@@ -114,6 +117,15 @@ function model(
         } else {
           console.log("No github token");
         }
+      },
+      storeChosenGitHubRepository(state, actions, repositoryId) {
+        const repository = state.gitHubRepositories.find(
+          repo => repo.id === repositoryId
+        );
+        console.log({ repository });
+        storeChosenGitHubRepository(repository)
+          .then(actions.syncSettings)
+          .then(() => actions.setView("settings"));
       }
     }
   };

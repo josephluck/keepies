@@ -61,6 +61,14 @@ export async function removeApp(app: Models.App): Promise<Models.Settings> {
   return settings;
 }
 
+export async function storeChosenGitHubRepository(
+  repository: Models.Repository
+): Promise<Models.Settings> {
+  await setSetting("chosenGitHubSyncRepo", repository);
+  console.log("Stored chosen sync repository", { repository });
+  return await getSettings();
+}
+
 export async function getGitHubRepositories(): Promise<Models.Repository[]> {
   const { gitHubAuthenticationToken } = await getSettings();
   console.log("Fetch user's GitHub repositories with", {
