@@ -69,13 +69,14 @@ export async function storeChosenGitHubRepository(
   return await getSettings();
 }
 
+// TODO: add pagination support... 100 repos should be plenty though
 export async function getGitHubRepositories(): Promise<Models.Repository[]> {
   const { gitHubAuthenticationToken } = await getSettings();
   console.log("Fetch user's GitHub repositories with", {
     gitHubAuthenticationToken
   });
   const request = await fetch(
-    `https://api.github.com/user/repos?access_token=${gitHubAuthenticationToken}`,
+    `https://api.github.com/user/repos?access_token=${gitHubAuthenticationToken}&per_page=100`,
     {
       method: "GET"
     }
@@ -98,6 +99,90 @@ export async function removeGitHubIntegration() {
 export async function storeGitHubDirectory(directory: string) {
   await setSetting("gitHubDirectoryName", directory);
   return await getSettings();
+}
+
+export async function syncKeepieWithGitHub(
+  fileName: string,
+  fileContents: string
+) {
+  const settings = await getSettings();
+  const repos = await getGitHubRepositories();
+  const repo = repos.find(repo => repo.id === settings.chosenGitHubSyncRepo.id);
+  const branchName = repo.default_branch;
+
+  const currentBranchCommitSHA = await getCurrentCommitSHA(branchName);
+  const currentBranchTreeSHA = await getCurrentTreeSHA(currentBranchCommitSHA);
+  const file = await createFile(fileName, fileContents);
+  const newCommitTreeSHA = await createTree(file, currentBranchTreeSHA);
+  const commitSHA = await createCommit(
+    `:camera: Keepie`,
+    currentBranchTreeSHA,
+    newCommitTreeSHA
+  );
+  return updateHead(branchName, commitSHA);
+}
+
+async function getCurrentCommitSHA(currentBranchName: string) {
+  const ref = await repo.getRef("heads/" + currentBranchName);
+  return ref.data.object.sha;
+}
+
+async function getCurrentTreeSHA(
+  currentBranchCommitSHA: string
+): Promise<string> {
+  const commit = await repo.getCommit(currentBranchCommitSHA);
+  return commit.data.tree.sha;
+}
+
+interface GitHubFile {
+  sha: string;
+  path: string;
+  mode: string;
+  type: string;
+}
+
+async function createFile(
+  fileName: string,
+  fileContents: string
+): Promise<GitHubFile> {
+  const { gitHubDirectoryName } = await getSettings();
+  const blob = await repo.createBlob(fileContents);
+
+  return {
+    sha: blob.data.sha,
+    path: `${gitHubDirectoryName}/${fileName}`,
+    mode: "100644", // simple file: https://developer.github.com/v3/git/trees/#create-a-tree
+    type: "blob"
+  };
+}
+
+async function createTree(
+  file: GitHubFile,
+  currentBranchTreeSHA: string
+): Promise<string> {
+  const tree = await repo.createTree([file], currentBranchTreeSHA);
+  return tree.data.sha;
+}
+
+async function createCommit(
+  message: string,
+  currentBranchCommitSHA: string,
+  newCommitTreeSha: string
+): Promise<string> {
+  const commit = await repo.commit(
+    currentBranchCommitSHA,
+    newCommitTreeSha,
+    message
+  );
+  return commit.data.sha;
+}
+
+async function updateHead(currentBranchName: string, newCommitSHA: string) {
+  const update = await repo.updateHead(
+    `heads/${currentBranchName}`,
+    newCommitSHA
+  );
+  return update;
 }
 
 async function authenticateWithGitHubOAuthApplication(): Promise<string> {

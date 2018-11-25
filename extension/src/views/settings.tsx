@@ -98,6 +98,15 @@ export function Settings({
           something, please file an issue.
         </TertiaryText>
       </SettingsListItem>
+      <SettingsListItem>
+        <TertiaryText style={{ margin: "0 auto" }}>
+          Keepies is made with 🍕 and ❤️ by{" "}
+          <a href="http://josephluck.co.uk" target="_blank">
+            Joseph Luck
+          </a>
+          .
+        </TertiaryText>
+      </SettingsListItem>
     </>
   );
 }
