@@ -10,12 +10,14 @@ export namespace Models {
   export type SettingsKeys =
     | "apps"
     | "gitHubAuthenticationToken"
-    | "chosenGitHubSyncRepo";
+    | "chosenGitHubSyncRepo"
+    | "gitHubDirectoryName";
 
   export interface Settings extends Record<SettingsKeys, any> {
     apps: Models.App[];
     gitHubAuthenticationToken: null | string;
     chosenGitHubSyncRepo: null | Models.Repository;
+    gitHubDirectoryName: null | string;
   }
 
   export interface Repository {

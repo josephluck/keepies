@@ -95,6 +95,11 @@ export async function removeGitHubIntegration() {
   return await getSettings();
 }
 
+export async function storeGitHubDirectory(directory: string) {
+  await setSetting("gitHubDirectoryName", directory);
+  return await getSettings();
+}
+
 async function authenticateWithGitHubOAuthApplication(): Promise<string> {
   // NB: https://developer.chrome.com/apps/identity#method-launchWebAuthFlow
   const CALLBACK_URL = chrome.identity.getRedirectURL();

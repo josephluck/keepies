@@ -17,11 +17,13 @@ export function GitHubSettings({
         initialValues={{
           repositoryId: state.settings.chosenGitHubSyncRepo
             ? state.settings.chosenGitHubSyncRepo.id
-            : 0
+            : 0,
+          directoryName: state.settings.gitHubDirectoryName || "keepies"
         }}
-        onSubmit={values =>
-          actions.storeChosenGitHubRepository(values.repositoryId)
-        }
+        onSubmit={values => {
+          actions.storeChosenGitHubRepository(values.repositoryId);
+          actions.storeGitHubDirectory(values.directoryName);
+        }}
         removeGitHubIntegration={actions.removeGitHubIntegration}
       />
     </>

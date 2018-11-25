@@ -8,6 +8,7 @@ import { Heading1, TertiaryText } from "./typography";
 import { SettingsHeadingWrap } from "../views/settings";
 import { AddAppText, SubmitFooter } from "./inline-form";
 import { ActionLink } from "./action-link";
+import { InputField } from "./input";
 
 const FormWrapper = styled.div`
   background: ${theme.colors.white};
@@ -43,6 +44,7 @@ interface State {
 
 interface Fields {
   repositoryId: number;
+  directoryName: string;
 }
 
 export class GitHubSettingsForm extends React.Component<Props, State> {
@@ -77,10 +79,13 @@ export class GitHubSettingsForm extends React.Component<Props, State> {
           this.onSubmit(values);
           state.resetForm();
         }}
-        validate={values => {
+        validate={(values: Fields) => {
           let errors: Partial<Record<keyof Fields, string>> = {};
           if (!values.repositoryId) {
             errors.repositoryId = "Please select a repository";
+          }
+          if (!values.directoryName) {
+            errors.directoryName = "Please enter a directory name";
           }
           return errors;
         }}
@@ -129,14 +134,18 @@ export class GitHubSettingsForm extends React.Component<Props, State> {
                   </SettingsHeadingWrap>
                   <TertiaryTextWithSpace>
                     Choose a directory name you would like Keepies to store
-                    images to. Defaults to keepies.
+                    images to.
                   </TertiaryTextWithSpace>
+
+                  <Field
+                    name="directoryName"
+                    render={({ field }: FieldProps<Fields>) => {
+                      return <InputField {...field} />;
+                    }}
+                  />
                 </FormSection>
 
                 <FormSection>
-                  <SettingsHeadingWrap>
-                    <Heading1>Remove</Heading1>
-                  </SettingsHeadingWrap>
                   <TertiaryTextWithSpace>
                     Had enough of the GitHub integration? You can remove it
                     below.
