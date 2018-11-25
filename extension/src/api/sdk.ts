@@ -105,183 +105,199 @@ export async function syncKeepieWithGitHub(
   fileName: string,
   fileContents: string
 ) {
-  console.log("Beginning keepie sync with github", { fileName });
+  console.log("Beginning keepie sync with github", { fileName, fileContents });
   const settings = await getSettings();
   const repos = await getGitHubRepositories();
   const repo = repos.find(repo => repo.id === settings.chosenGitHubSyncRepo.id);
-  const branchName = repo.default_branch;
+  // const branchName = repo.default_branch;
   const username = repo.owner.login;
   const token = settings.gitHubAuthenticationToken;
 
-  const currentBranchCommitSHA = await getCurrentCommitSHA(
-    username,
-    repo.name,
-    token,
-    branchName
-  );
-  console.log({ currentBranchCommitSHA });
-  const currentBranchTreeSHA = await getCurrentTreeSHA(
-    username,
-    repo.name,
-    token,
-    currentBranchCommitSHA
-  );
-  console.log({ currentBranchTreeSHA });
-  const file = await createFile(
-    username,
-    repo.name,
-    token,
-    fileName,
-    fileContents
-  );
-  console.log({ file });
-  const newCommitTreeSHA = await createTree(
-    username,
-    repo.name,
-    token,
-    file,
-    currentBranchTreeSHA
-  );
-  console.log({ newCommitTreeSHA });
-  const commitSHA = await createCommit(
-    username,
-    repo.name,
-    token,
-    `:camera: Keepie`,
-    currentBranchCommitSHA,
-    newCommitTreeSHA
-  );
-  console.log({ commitSHA });
-  await updateHead(username, repo.name, token, branchName, commitSHA);
-
-  console.log("Finished keepie sync with github");
-}
-
-async function getCurrentCommitSHA(
-  username: string,
-  repoName: string,
-  token: string,
-  currentBranchName: string
-) {
   const request = await fetch(
-    `https://api.github.com/repos/${username}/${repoName}/git/refs/heads/${currentBranchName}?access_token=${token}`
-  );
-  const ref = await request.json();
-  return ref.object.sha;
-}
-
-async function getCurrentTreeSHA(
-  username: string,
-  repoName: string,
-  token: string,
-  currentBranchCommitSHA: string
-): Promise<string> {
-  const request = await fetch(
-    `https://api.github.com/repos/${username}/${repoName}/git/commits/${currentBranchCommitSHA}?access_token=${token}`
-  );
-  const commit = await request.json();
-  return commit.tree.sha;
-}
-
-interface GitHubFile {
-  sha: string;
-  path: string;
-  mode: string;
-  type: string;
-}
-
-async function createFile(
-  username: string,
-  repoName: string,
-  token: string,
-  fileName: string,
-  fileContents: string
-): Promise<GitHubFile> {
-  const { gitHubDirectoryName } = await getSettings();
-  const request = await fetch(
-    `https://api.github.com/repos/${username}/${repoName}/git/blobs?access_token=${token}`,
+    `https://api.github.com/repos/${username}/${
+      repo.name
+    }/contents/${fileName}?access_token=${token}`,
     {
-      method: "POST",
+      method: "PUT",
       body: JSON.stringify({
-        content: fileContents,
-        encoding: "base64" // For images
+        message: `:camera: Keepie`,
+        content: fileContents
       })
     }
   );
   const blob = await request.json();
 
-  return {
-    sha: blob.sha,
-    path: `${gitHubDirectoryName}/${fileName}`,
-    mode: "100644", // simple file: https://developer.github.com/v3/git/trees/#create-a-tree
-    type: "blob"
-  };
+  console.log(blob);
+
+  // const currentBranchCommitSHA = await getCurrentCommitSHA(
+  //   username,
+  //   repo.name,
+  //   token,
+  //   branchName
+  // );
+  // console.log({ currentBranchCommitSHA });
+  // const currentBranchTreeSHA = await getCurrentTreeSHA(
+  //   username,
+  //   repo.name,
+  //   token,
+  //   currentBranchCommitSHA
+  // );
+  // console.log({ currentBranchTreeSHA });
+  // const file = await createFile(
+  //   username,
+  //   repo.name,
+  //   token,
+  //   fileName,
+  //   fileContents
+  // );
+  // console.log({ file });
+  // const newCommitTreeSHA = await createTree(
+  //   username,
+  //   repo.name,
+  //   token,
+  //   file,
+  //   currentBranchTreeSHA
+  // );
+  // console.log({ newCommitTreeSHA });
+  // const commitSHA = await createCommit(
+  //   username,
+  //   repo.name,
+  //   token,
+  //   `:camera: Keepie`,
+  //   currentBranchCommitSHA,
+  //   newCommitTreeSHA
+  // );
+  // console.log({ commitSHA });
+  // await updateHead(username, repo.name, token, branchName, commitSHA);
+
+  console.log("Finished keepie sync with github");
 }
 
-async function createTree(
-  username: string,
-  repoName: string,
-  token: string,
-  file: GitHubFile,
-  currentBranchTreeSHA: string
-): Promise<string> {
-  const request = await fetch(
-    `https://api.github.com/repos/${username}/${repoName}/git/trees?access_token=${token}`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        tree: [file],
-        base_tree: currentBranchTreeSHA
-      })
-    }
-  );
-  const tree = await request.json();
-  return tree.sha;
-}
+// async function getCurrentCommitSHA(
+//   username: string,
+//   repoName: string,
+//   token: string,
+//   currentBranchName: string
+// ) {
+//   const request = await fetch(
+//     `https://api.github.com/repos/${username}/${repoName}/git/refs/heads/${currentBranchName}?access_token=${token}`
+//   );
+//   const ref = await request.json();
+//   return ref.object.sha;
+// }
 
-async function createCommit(
-  username: string,
-  repoName: string,
-  token: string,
-  message: string,
-  currentBranchCommitSHA: string,
-  newCommitTreeSha: string
-): Promise<string> {
-  const request = await fetch(
-    `https://api.github.com/repos/${username}/${repoName}/git/commits?access_token=${token}`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        message,
-        tree: newCommitTreeSha,
-        parents: [currentBranchCommitSHA]
-      })
-    }
-  );
+// async function getCurrentTreeSHA(
+//   username: string,
+//   repoName: string,
+//   token: string,
+//   currentBranchCommitSHA: string
+// ): Promise<string> {
+//   const request = await fetch(
+//     `https://api.github.com/repos/${username}/${repoName}/git/commits/${currentBranchCommitSHA}?access_token=${token}`
+//   );
+//   const commit = await request.json();
+//   return commit.tree.sha;
+// }
 
-  const commit = await request.json();
-  return commit.sha;
-}
+// interface GitHubFile {
+//   sha: string;
+//   path: string;
+//   mode: string;
+//   type: string;
+// }
 
-async function updateHead(
-  username: string,
-  repoName: string,
-  token: string,
-  currentBranchName: string,
-  newCommitSHA: string
-) {
-  const request = await fetch(
-    `https://api.github.com/repos/${username}/${repoName}/git/refs/heads/${currentBranchName}?access_token=${token}`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        sha: newCommitSHA
-      })
-    }
-  );
-  const update = await request.json();
-  return update;
-}
+// async function createFile(
+//   username: string,
+//   repoName: string,
+//   token: string,
+//   fileName: string,
+//   fileContents: string
+// ): Promise<GitHubFile> {
+//   const { gitHubDirectoryName } = await getSettings();
+//   const request = await fetch(
+//     `https://api.github.com/repos/${username}/${repoName}/git/blobs?access_token=${token}`,
+//     {
+//       method: "POST",
+//       body: JSON.stringify({
+//         content: fileContents,
+//         encoding: "base64" // For images
+//       })
+//     }
+//   );
+//   const blob = await request.json();
+
+//   return {
+//     sha: blob.sha,
+//     path: `${gitHubDirectoryName}/${fileName}`,
+//     mode: "100644", // simple file: https://developer.github.com/v3/git/trees/#create-a-tree
+//     type: "blob"
+//   };
+// }
+
+// async function createTree(
+//   username: string,
+//   repoName: string,
+//   token: string,
+//   file: GitHubFile,
+//   currentBranchTreeSHA: string
+// ): Promise<string> {
+//   const request = await fetch(
+//     `https://api.github.com/repos/${username}/${repoName}/git/trees?access_token=${token}`,
+//     {
+//       method: "POST",
+//       body: JSON.stringify({
+//         tree: [file],
+//         base_tree: currentBranchTreeSHA
+//       })
+//     }
+//   );
+//   const tree = await request.json();
+//   return tree.sha;
+// }
+
+// async function createCommit(
+//   username: string,
+//   repoName: string,
+//   token: string,
+//   message: string,
+//   currentBranchCommitSHA: string,
+//   newCommitTreeSha: string
+// ): Promise<string> {
+//   const request = await fetch(
+//     `https://api.github.com/repos/${username}/${repoName}/git/commits?access_token=${token}`,
+//     {
+//       method: "POST",
+//       body: JSON.stringify({
+//         message,
+//         tree: newCommitTreeSha,
+//         parents: [currentBranchCommitSHA]
+//       })
+//     }
+//   );
+
+//   const commit = await request.json();
+//   return commit.sha;
+// }
+
+// async function updateHead(
+//   username: string,
+//   repoName: string,
+//   token: string,
+//   currentBranchName: string,
+//   newCommitSHA: string
+// ) {
+//   const request = await fetch(
+//     `https://api.github.com/repos/${username}/${repoName}/git/refs/heads/${currentBranchName}?access_token=${token}`,
+//     {
+//       method: "POST",
+//       body: JSON.stringify({
+//         sha: newCommitSHA
+//       })
+//     }
+//   );
+//   const update = await request.json();
+//   return update;
+// }
 
 async function authenticateWithGitHubOAuthApplication(): Promise<string> {
   // NB: https://developer.chrome.com/apps/identity#method-launchWebAuthFlow
