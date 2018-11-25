@@ -1,5 +1,5 @@
 import { messageKeepieMade, messageRequestKeepie } from "./messages";
-import { getSettings, setSetting } from "./api/sdk";
+import { getSettings, setSetting, syncKeepieWithGitHub } from "./api/sdk";
 import { Models } from "./api/models";
 import { Fixtures } from "./api/fixtures";
 
@@ -23,9 +23,10 @@ export async function keepie() {
   if (app) {
     chrome.tabs.captureVisibleTab(url => {
       if (url) {
+        const filename = `${generateFileName(tab)}.jpeg`;
         chrome.downloads.download(
           {
-            filename: `${generateFileName(tab)}.jpeg`,
+            filename,
             url
           },
           async () => {
@@ -44,6 +45,12 @@ export async function keepie() {
             console.log("Keepie made, updating settings with new times", {
               settings: await getSettings()
             });
+            if (
+              settings.gitHubAuthenticationToken &&
+              settings.chosenGitHubSyncRepo
+            ) {
+              await syncKeepieWithGitHub(filename, url);
+            }
             chrome.runtime.sendMessage(messageKeepieMade());
           }
         );

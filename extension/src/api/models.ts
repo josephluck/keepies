@@ -32,6 +32,9 @@ export namespace Models {
     created_at: string;
     updated_at: string;
     pushed_at: string;
+    owner: {
+      login: string;
+    };
     permissions: {
       admin: boolean;
       push: boolean;

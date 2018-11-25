@@ -109,28 +109,69 @@ export async function syncKeepieWithGitHub(
   const repos = await getGitHubRepositories();
   const repo = repos.find(repo => repo.id === settings.chosenGitHubSyncRepo.id);
   const branchName = repo.default_branch;
+  const username = repo.owner.login;
+  const token = settings.gitHubAuthenticationToken;
 
-  const currentBranchCommitSHA = await getCurrentCommitSHA(branchName);
-  const currentBranchTreeSHA = await getCurrentTreeSHA(currentBranchCommitSHA);
-  const file = await createFile(fileName, fileContents);
-  const newCommitTreeSHA = await createTree(file, currentBranchTreeSHA);
+  const currentBranchCommitSHA = await getCurrentCommitSHA(
+    username,
+    repo.name,
+    token,
+    branchName
+  );
+  const currentBranchTreeSHA = await getCurrentTreeSHA(
+    username,
+    repo.name,
+    token,
+    currentBranchCommitSHA
+  );
+  const file = await createFile(
+    username,
+    repo.name,
+    token,
+    fileName,
+    fileContents
+  );
+  const newCommitTreeSHA = await createTree(
+    username,
+    repo.name,
+    token,
+    file,
+    currentBranchTreeSHA
+  );
   const commitSHA = await createCommit(
+    username,
+    repo.name,
+    token,
     `:camera: Keepie`,
     currentBranchTreeSHA,
     newCommitTreeSHA
   );
-  return updateHead(branchName, commitSHA);
+  return updateHead(username, repo.name, token, branchName, commitSHA);
 }
 
-async function getCurrentCommitSHA(currentBranchName: string) {
-  const ref = await repo.getRef("heads/" + currentBranchName);
+async function getCurrentCommitSHA(
+  username: string,
+  repoName: string,
+  token: string,
+  currentBranchName: string
+) {
+  const request = await fetch(
+    `https://api.github.com/repos/${username}/${repoName}/git/refs/heads/${currentBranchName}?access_token=${token}`
+  );
+  const ref = await request.json();
   return ref.data.object.sha;
 }
 
 async function getCurrentTreeSHA(
+  username: string,
+  repoName: string,
+  token: string,
   currentBranchCommitSHA: string
 ): Promise<string> {
-  const commit = await repo.getCommit(currentBranchCommitSHA);
+  const request = await fetch(
+    `https://api.github.com/repos/${username}/${repoName}/git/commits/${currentBranchCommitSHA}?access_token=${token}`
+  );
+  const commit = await request.json();
   return commit.data.tree.sha;
 }
 
@@ -142,11 +183,23 @@ interface GitHubFile {
 }
 
 async function createFile(
+  username: string,
+  repoName: string,
+  token: string,
   fileName: string,
   fileContents: string
 ): Promise<GitHubFile> {
   const { gitHubDirectoryName } = await getSettings();
-  const blob = await repo.createBlob(fileContents);
+  const request = await fetch(
+    `https://api.github.com/repos/${username}/${repoName}/git/blobs?access_token=${token}`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        content: fileContents
+      })
+    }
+  );
+  const blob = await request.json();
 
   return {
     sha: blob.data.sha,
@@ -157,31 +210,67 @@ async function createFile(
 }
 
 async function createTree(
+  username: string,
+  repoName: string,
+  token: string,
   file: GitHubFile,
   currentBranchTreeSHA: string
 ): Promise<string> {
-  const tree = await repo.createTree([file], currentBranchTreeSHA);
+  const request = await fetch(
+    `https://api.github.com/repos/${username}/${repoName}/git/trees?access_token=${token}`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        tree: [file],
+        base_tree: currentBranchTreeSHA
+      })
+    }
+  );
+  const tree = await request.json();
   return tree.data.sha;
 }
 
 async function createCommit(
+  username: string,
+  repoName: string,
+  token: string,
   message: string,
   currentBranchCommitSHA: string,
   newCommitTreeSha: string
 ): Promise<string> {
-  const commit = await repo.commit(
-    currentBranchCommitSHA,
-    newCommitTreeSha,
-    message
+  const request = await fetch(
+    `https://api.github.com/repos/${username}/${repoName}/git/commits?access_token=${token}`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        message,
+        tree: newCommitTreeSha,
+        parents: currentBranchCommitSHA
+      })
+    }
   );
+
+  const commit = await request.json();
   return commit.data.sha;
 }
 
-async function updateHead(currentBranchName: string, newCommitSHA: string) {
-  const update = await repo.updateHead(
-    `heads/${currentBranchName}`,
-    newCommitSHA
+async function updateHead(
+  username: string,
+  repoName: string,
+  token: string,
+  currentBranchName: string,
+  newCommitSHA: string
+) {
+  const request = await fetch(
+    `https://api.github.com/repos/${username}/${repoName}/git/refs/heads?access_token=${token}`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        sha: newCommitSHA
+      })
+    }
   );
+  const update = await request.json();
   return update;
 }
 
