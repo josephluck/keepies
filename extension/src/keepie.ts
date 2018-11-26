@@ -24,6 +24,7 @@ export async function keepie() {
     chrome.tabs.captureVisibleTab(url => {
       if (url) {
         const filename = `${generateFileName(tab)}.jpeg`;
+        const base64Image = url.replace(/data:image\/jpeg;base64,/, "");
         chrome.downloads.download(
           {
             filename,
@@ -49,7 +50,7 @@ export async function keepie() {
               settings.gitHubAuthenticationToken &&
               settings.chosenGitHubSyncRepo
             ) {
-              await syncKeepieWithGitHub(filename, url);
+              await syncKeepieWithGitHub(filename, base64Image);
             }
             chrome.runtime.sendMessage(messageKeepieMade());
           }
