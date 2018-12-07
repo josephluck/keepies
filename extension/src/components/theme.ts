@@ -38,6 +38,7 @@ export const theme = {
     _10: rem(10),
     _16: rem(16),
     _20: rem(20),
+    _34: rem(34),
     _36: rem(36)
   },
   iconLogo: {

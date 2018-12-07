@@ -26,6 +26,7 @@
     "date-fns": "^1.29.0",
     "faker": "^4.1.0",
     "formik": "^1.3.1",
+    "fuzzy-search": "^2.1.0",
     "helix-js": "^2.0.1",
     "next-plugin-transpile-modules": "^0.1.3",
     "react-collapse": "^4.0.3",

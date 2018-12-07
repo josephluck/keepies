@@ -136,7 +136,6 @@ export class GitHubSettingsForm extends React.Component<Props, State> {
                     Choose a directory name you would like Keepies to store
                     images to.
                   </TertiaryTextWithSpace>
-
                   <Field
                     name="directoryName"
                     render={({ field }: FieldProps<Fields>) => {
