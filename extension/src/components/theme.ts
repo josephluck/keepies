@@ -23,6 +23,7 @@ export const theme = {
     label: "#309edc",
     radioCheckedBorder: "#309edc",
     radioUncheckedBorder: "#1C0529",
+    searchInputIcon: "#6C6794",
     _1: "#6C6794",
     _2: "#B8B8BD",
     _3: "#F2290D",
@@ -33,6 +34,7 @@ export const theme = {
   },
   spacing: {
     _2: rem(2),
+    _3: rem(3),
     _4: rem(4),
     _8: rem(8),
     _10: rem(10),

@@ -7,6 +7,7 @@ import { Loading } from "./loading";
 import * as FuzzySearch from "fuzzy-search";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Collapse } from "react-collapse";
 
 const RadioListWrapper = styled.div`
   position: relative;
@@ -60,13 +61,14 @@ const SearchInput = styled.input`
 `;
 
 const SearchIcon = styled.div`
-  font-size: ${theme.font._14.size};
-  line-height: ${theme.font._14.size};
+  font-size: ${theme.font._16.size};
+  line-height: ${theme.font._16.size};
   pointer-events: none;
   position: absolute;
   left: ${theme.spacing._10};
   top: 50%;
   transform: translateY(-50%);
+  color: ${theme.colors.searchInputIcon};
 `;
 
 interface Option {
@@ -129,38 +131,40 @@ export class RadioList extends React.Component<Props, State> {
     const { search, options } = this.state;
 
     return (
-      <RadioListWrapper>
-        {isLoading ? (
-          <Loading>{loadingText}</Loading>
-        ) : (
-          <>
-            <InputWrapper>
-              <SearchIcon>
-                <FontAwesomeIcon icon={faSearch} />
-              </SearchIcon>
-              <SearchInput
-                value={search}
-                onInput={(e: any) => this.onTextSearch(e.target.value)}
-              />
-            </InputWrapper>
-            <ScrollWrapper>
-              {options.map(option => (
-                <OptionWrapper
-                  key={option.value}
-                  label={
-                    <OptionLabelWrapper>
-                      {option.label}
-                      {option.value === value ? <Label>Chosen</Label> : null}
-                    </OptionLabelWrapper>
-                  }
-                  isChecked={option.value === value}
-                  onChange={() => onChange(option.value)}
+      <Collapse isOpened={true}>
+        <RadioListWrapper>
+          {isLoading ? (
+            <Loading>{loadingText}</Loading>
+          ) : (
+            <>
+              <InputWrapper>
+                <SearchIcon>
+                  <FontAwesomeIcon icon={faSearch} />
+                </SearchIcon>
+                <SearchInput
+                  value={search}
+                  onInput={(e: any) => this.onTextSearch(e.target.value)}
                 />
-              ))}
-            </ScrollWrapper>
-          </>
-        )}
-      </RadioListWrapper>
+              </InputWrapper>
+              <ScrollWrapper>
+                {options.map(option => (
+                  <OptionWrapper
+                    key={option.value}
+                    label={
+                      <OptionLabelWrapper>
+                        {option.label}
+                        {option.value === value ? <Label>Chosen</Label> : null}
+                      </OptionLabelWrapper>
+                    }
+                    isChecked={option.value === value}
+                    onChange={() => onChange(option.value)}
+                  />
+                ))}
+              </ScrollWrapper>
+            </>
+          )}
+        </RadioListWrapper>
+      </Collapse>
     );
   }
 }
