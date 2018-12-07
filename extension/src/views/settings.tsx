@@ -63,8 +63,18 @@ export function Settings({
           {gitHubAuthenticationToken && chosenGitHubSyncRepo ? (
             <>
               Keepies is currently syncing to
-              <RepoLabel>{chosenGitHubSyncRepo.name}</RepoLabel>
-              in directory <RepoLabel>{gitHubDirectoryName}</RepoLabel>
+              <a href={chosenGitHubSyncRepo.html_url} target="_blank">
+                <RepoLabel>{chosenGitHubSyncRepo.name}</RepoLabel>
+              </a>
+              in directory
+              <a
+                href={`${chosenGitHubSyncRepo.html_url}/tree/${
+                  chosenGitHubSyncRepo.default_branch
+                }/${gitHubDirectoryName}`}
+                target="_blank"
+              >
+                <RepoLabel>{gitHubDirectoryName}</RepoLabel>
+              </a>
             </>
           ) : gitHubAuthenticationToken ? (
             'You have given Keepies access to GitHub but you haven\'t chosen a GitHub repository to sync with yet. Choose one by visiting the "Settings" menu above.'

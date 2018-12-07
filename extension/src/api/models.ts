@@ -28,6 +28,7 @@ export namespace Models {
     description: string;
     language: string;
     git_url: string;
+    html_url: string;
     archived: boolean;
     created_at: string;
     updated_at: string;
