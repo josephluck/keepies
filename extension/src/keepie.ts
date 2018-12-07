@@ -88,11 +88,10 @@ function replaceWhiteSpace(str) {
 }
 
 function generateFileName(tab: chrome.tabs.Tab): string {
-  return ["keepies", tab ? tab.title : "", Date.now()]
+  return ["keepies", Date.now(), tab ? tab.title : ""]
     .filter(val => !!val)
     .map(replaceWhiteSpace)
     .join("-")
-    .replace(/[^a-z0-9]/gi, "_")
     .toLowerCase();
 }
 
