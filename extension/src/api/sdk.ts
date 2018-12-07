@@ -2,6 +2,7 @@ import * as urlParse from "url-parse";
 import { Models } from "./models";
 import { Fixtures } from "./fixtures";
 import { env } from "../env";
+import { makeStringFileSafe } from "../keepie";
 
 export function setSetting<K extends Models.SettingsKeys>(
   key: K,
@@ -103,7 +104,8 @@ export async function storeGitHubDirectory(directory: string) {
 
 export async function syncKeepieWithGitHub(
   fileName: string,
-  fileContents: string
+  fileContents: string,
+  appName: string
 ) {
   console.log("Beginning keepie sync with github", { fileName, fileContents });
   const settings = await getSettings();
@@ -115,7 +117,7 @@ export async function syncKeepieWithGitHub(
   const request = await fetch(
     `https://api.github.com/repos/${username}/${repo.name}/contents/${
       settings.gitHubDirectoryName
-    }/${fileName}?access_token=${token}`,
+    }/${makeStringFileSafe(appName)}/${fileName}?access_token=${token}`,
     {
       method: "PUT",
       body: JSON.stringify({

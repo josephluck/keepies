@@ -50,7 +50,7 @@ export async function keepie() {
               settings.gitHubAuthenticationToken &&
               settings.chosenGitHubSyncRepo
             ) {
-              await syncKeepieWithGitHub(filename, base64Image);
+              await syncKeepieWithGitHub(filename, base64Image, app.name);
             }
             chrome.runtime.sendMessage(messageKeepieMade());
           }
@@ -87,12 +87,14 @@ function replaceWhiteSpace(str) {
     .join("_");
 }
 
+export function makeStringFileSafe(str: string): string {
+  return replaceWhiteSpace(str).toLowerCase();
+}
+
 function generateFileName(tab: chrome.tabs.Tab): string {
-  return ["keepies", Date.now(), tab ? tab.title : ""]
-    .filter(val => !!val)
-    .map(replaceWhiteSpace)
-    .join("-")
-    .toLowerCase();
+  return makeStringFileSafe(
+    ["keepies", Date.now(), tab ? tab.title : ""].filter(val => !!val).join("-")
+  );
 }
 
 function getAppFromUrl(settings: Models.Settings, url: string): Models.App {
