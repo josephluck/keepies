@@ -58,6 +58,11 @@ const SearchInput = styled.input`
   padding-left: ${theme.spacing._34};
   border: 0;
   width: 100%;
+  transition: all 200ms ease;
+
+  &:focus + * {
+    color: ${theme.colors.link};
+  }
 `;
 
 const SearchIcon = styled.div`
@@ -69,6 +74,7 @@ const SearchIcon = styled.div`
   top: 50%;
   transform: translateY(-50%);
   color: ${theme.colors.searchInputIcon};
+  transition: all 200ms ease;
 `;
 
 interface Option {
@@ -82,6 +88,7 @@ interface Props {
   onChange: (value: string | number) => void;
   isLoading: boolean;
   loadingText: React.ReactNode;
+  searchPlaceholderText: string;
 }
 
 interface State {
@@ -127,7 +134,13 @@ export class RadioList extends React.Component<Props, State> {
   };
 
   render() {
-    const { value, onChange, isLoading, loadingText } = this.props;
+    const {
+      value,
+      onChange,
+      isLoading,
+      loadingText,
+      searchPlaceholderText
+    } = this.props;
     const { search, options } = this.state;
 
     return (
@@ -138,13 +151,14 @@ export class RadioList extends React.Component<Props, State> {
           ) : (
             <>
               <InputWrapper>
-                <SearchIcon>
-                  <FontAwesomeIcon icon={faSearch} />
-                </SearchIcon>
                 <SearchInput
                   value={search}
                   onInput={(e: any) => this.onTextSearch(e.target.value)}
+                  placeholder={searchPlaceholderText}
                 />
+                <SearchIcon>
+                  <FontAwesomeIcon icon={faSearch} />
+                </SearchIcon>
               </InputWrapper>
               <ScrollWrapper>
                 {options.map(option => (

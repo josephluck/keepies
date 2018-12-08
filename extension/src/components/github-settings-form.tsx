@@ -121,6 +121,7 @@ export class GitHubSettingsForm extends React.Component<Props, State> {
                             form.setFieldValue("repositoryId", repositoryId);
                           }}
                           isLoading={this.props.isLoading}
+                          searchPlaceholderText="Search repositories"
                           loadingText="Loading repositories"
                         />
                       );
