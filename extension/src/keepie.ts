@@ -21,10 +21,10 @@ export async function keepie() {
   const app = getAppFromUrl(settings, tab.url);
   console.log("Starting keepie capture of", { app, tab });
   if (app) {
-    chrome.tabs.captureVisibleTab(url => {
+    chrome.tabs.captureVisibleTab({ format: "png" }, url => {
       if (url) {
-        const filename = `${generateFileName(tab)}.jpeg`;
-        const base64Image = url.replace(/data:image\/jpeg;base64,/, "");
+        const filename = `${generateFileName(tab)}.png`;
+        const base64Image = url.replace(/data:image\/png;base64,/, "");
         chrome.downloads.download(
           {
             filename,
@@ -88,7 +88,9 @@ function replaceWhiteSpace(str) {
 }
 
 export function makeStringFileSafe(str: string): string {
-  return replaceWhiteSpace(str).toLowerCase();
+  return replaceWhiteSpace(str)
+    .toLowerCase()
+    .replace(/[\W_]+/g, "-");
 }
 
 function generateFileName(tab: chrome.tabs.Tab): string {
