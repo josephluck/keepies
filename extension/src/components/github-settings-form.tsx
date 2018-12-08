@@ -105,7 +105,7 @@ export class GitHubSettingsForm extends React.Component<Props, State> {
                   </SettingsHeadingWrap>
                   <TertiaryTextWithSpace>
                     Choose which GitHub repository you would like to sync
-                    Keepies to.
+                    captures to.
                   </TertiaryTextWithSpace>
                   <Field
                     name="repositoryId"
@@ -134,8 +134,8 @@ export class GitHubSettingsForm extends React.Component<Props, State> {
                     <Heading1>Directory</Heading1>
                   </SettingsHeadingWrap>
                   <TertiaryTextWithSpace>
-                    Choose a directory name you would like Keepies to store
-                    images to.
+                    Choose a directory name you would like Keepies to sync
+                    captures to.
                   </TertiaryTextWithSpace>
                   <Field
                     name="directoryName"

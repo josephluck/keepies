@@ -56,13 +56,13 @@ export function Settings({
           )}
         </SettingsHeadingWrap>
         <TertiaryTextWithSpace>
-          Setup an integration with GitHub to automatically backup keepies to a
+          Setup an integration with GitHub to automatically backup captures to a
           git repository.
         </TertiaryTextWithSpace>
         <BoldTertiaryText>
           {gitHubAuthenticationToken && chosenGitHubSyncRepo ? (
             <>
-              Keepies is currently syncing to
+              Keepies is currently syncing captures to
               <a href={chosenGitHubSyncRepo.html_url} target="_blank">
                 <RepoLabel>{chosenGitHubSyncRepo.name}</RepoLabel>
               </a>
@@ -77,7 +77,7 @@ export function Settings({
               </a>
             </>
           ) : gitHubAuthenticationToken ? (
-            'You have given Keepies access to GitHub but you haven\'t chosen a GitHub repository to sync with yet. Choose one by visiting the "Settings" menu above.'
+            'You have given Keepies access to GitHub but you haven\'t chosen a repository to sync with yet. Please visit the "Settings" menu above to complete the set up.'
           ) : (
             "You haven't set up an integration with GitHub yet."
           )}
@@ -85,13 +85,28 @@ export function Settings({
       </SettingsListItem>
       <SettingsListItem>
         <SettingsHeadingWrap>
-          <Heading1>Keepie interval</Heading1>
+          <Heading1>Automatic download</Heading1>
           <ActionLink>Change</ActionLink>
         </SettingsHeadingWrap>
         <TertiaryTextWithSpace>
-          Set the time interval between screenshots.
+          Choose whether Keepies should automatically download captures to your
+          computer.
         </TertiaryTextWithSpace>
-        <BoldTertiaryText>Your interval is set to 30 minutes.</BoldTertiaryText>
+        <BoldTertiaryText>
+          Keepies is automatically downloading captures.
+        </BoldTertiaryText>
+      </SettingsListItem>
+      <SettingsListItem>
+        <SettingsHeadingWrap>
+          <Heading1>Capture interval</Heading1>
+          <ActionLink>Change</ActionLink>
+        </SettingsHeadingWrap>
+        <TertiaryTextWithSpace>
+          Set the time interval between captures.
+        </TertiaryTextWithSpace>
+        <BoldTertiaryText>
+          Your capture interval is set to 30 minutes.
+        </BoldTertiaryText>
       </SettingsListItem>
       <SettingsListItem>
         <SettingsHeadingWrap>
