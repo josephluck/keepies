@@ -11,6 +11,7 @@ function app(override: Partial<Models.App> = {}): Models.App {
     origin: faker.internet.url(),
     lastKeepieOn: faker.date.past().getTime(),
     nextKeepieDue: faker.date.future().getTime(),
+    numberOfKeepiesMade: faker.random.number(),
     ...override
   };
 }
@@ -19,6 +20,7 @@ function emptyApp(): Models.App {
   return {
     name: "",
     origin: "",
+    numberOfKeepiesMade: 0,
     lastKeepieOn: Date.now(),
     nextKeepieDue: nextKeepieDue()
   };

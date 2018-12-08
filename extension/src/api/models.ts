@@ -3,21 +3,27 @@ export namespace Models {
     icon?: string;
     name: string;
     origin: string;
+    numberOfKeepiesMade: number;
     lastKeepieOn: number;
     nextKeepieDue: number;
   }
 
-  export type SettingsKeys =
+  export type SyncSettingsKeys =
     | "apps"
     | "gitHubAuthenticationToken"
     | "chosenGitHubSyncRepo"
     | "gitHubDirectoryName";
+
+  export type LocalSettingsKeys = "lastCaptureDataUrl";
+
+  export type SettingsKeys = SyncSettingsKeys | LocalSettingsKeys;
 
   export interface Settings extends Record<SettingsKeys, any> {
     apps: Models.App[];
     gitHubAuthenticationToken: null | string;
     chosenGitHubSyncRepo: null | Models.Repository;
     gitHubDirectoryName: null | string;
+    lastCaptureDataUrl: string;
   }
 
   export interface Repository {

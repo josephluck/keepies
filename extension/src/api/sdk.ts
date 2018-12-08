@@ -3,6 +3,16 @@ import { Models } from "./models";
 import { Fixtures } from "./fixtures";
 import { env } from "../env";
 import { makeStringFileSafe } from "../keepie";
+import pixelmatch = require("pixelmatch");
+
+const localSettingsKeys: Models.LocalSettingsKeys[] = ["lastCaptureDataUrl"];
+
+const syncSettingsKeys: Models.SyncSettingsKeys[] = [
+  "apps",
+  "chosenGitHubSyncRepo",
+  "gitHubAuthenticationToken",
+  "gitHubDirectoryName"
+];
 
 export function setSetting<K extends Models.SettingsKeys>(
   key: K,
@@ -10,38 +20,62 @@ export function setSetting<K extends Models.SettingsKeys>(
 ) {
   console.log("Storing setting", { key, value });
   return new Promise(resolve => {
-    chrome.storage.sync.set(
-      {
-        [key]: value
-      },
-      resolve
-    );
+    if (localSettingsKeys.indexOf(key as any) > -1) {
+      chrome.storage.local.set(
+        {
+          [key]: value
+        },
+        resolve
+      );
+    } else {
+      chrome.storage.sync.set(
+        {
+          [key]: value
+        },
+        resolve
+      );
+    }
   });
 }
 
 function getAllSettings(): Promise<Models.Settings> {
   return new Promise(resolve => {
     // NB: null gets all settings
-    chrome.storage.sync.get(null, settings => {
-      console.log("Retrieved settings", { settings });
-      resolve(settings as Models.Settings);
+    chrome.storage.sync.get(null, syncSettings => {
+      chrome.storage.local.get(null, localSettings => {
+        const settings = { ...syncSettings, ...localSettings };
+        console.log("Retrieved settings", settings);
+        resolve(settings as Models.Settings);
+      });
     });
   });
 }
 
+// NB: this fetches settings and sets defaults if not set
 export async function getSettings(): Promise<Models.Settings> {
   const current = await getAllSettings();
-  if (!current.apps) {
+  if (typeof current.apps === "undefined") {
     await setSetting("apps", []);
-    return await getAllSettings();
   }
-  return current;
+  if (typeof current.gitHubAuthenticationToken === "undefined") {
+    await setSetting("gitHubAuthenticationToken", null);
+  }
+  if (typeof current.chosenGitHubSyncRepo === "undefined") {
+    await setSetting("chosenGitHubSyncRepo", null);
+  }
+  if (typeof current.gitHubDirectoryName === "undefined") {
+    await setSetting("gitHubDirectoryName", null);
+  }
+  if (typeof current.lastCaptureDataUrl === "undefined") {
+    await setSetting("lastCaptureDataUrl", "");
+  }
+  return await getAllSettings();
 }
 
 export async function storeApp(
   app: Partial<Models.App>
 ): Promise<Models.Settings> {
-  const current = await getAllSettings();
+  const current = await getSettings();
   const origin = urlParse(app.origin, {}).origin;
   const appToStore: Models.App = {
     ...Fixtures.emptyApp(),
@@ -49,17 +83,40 @@ export async function storeApp(
     origin
   };
   await setSetting("apps", [...current.apps, appToStore]);
-  const settings = await getAllSettings();
+  const settings = await getSettings();
   console.log("Stored app", { app: appToStore, settings });
   return settings;
 }
 
 export async function removeApp(app: Models.App): Promise<Models.Settings> {
-  const current = await getAllSettings();
+  const current = await getSettings();
   await setSetting("apps", current.apps.filter(a => a.origin !== app.origin));
-  const settings = await getAllSettings();
+  const settings = await getSettings();
   console.log("Removed app", { app, settings });
   return settings;
+}
+
+export function captureVisibleTab(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    chrome.tabs.captureVisibleTab({ format: "png" }, url => {
+      if (!url) {
+        reject("Capture failed, no URL given from captureVisibleTab");
+      }
+      resolve(url);
+    });
+  });
+}
+
+export function downloadKeepie(filename: string, url: string) {
+  return new Promise(resolve => {
+    chrome.downloads.download(
+      {
+        filename,
+        url
+      },
+      resolve
+    );
+  });
 }
 
 export async function storeChosenGitHubRepository(
@@ -169,10 +226,69 @@ async function authenticateWithGitHubOAuthApplication(): Promise<string> {
   }) as any;
 }
 
+interface ImageDetails {
+  width: number;
+  height: number;
+  uInt8: Uint8Array;
+}
+
+function getImageDetailsFromBase64(base64: string): Promise<ImageDetails> {
+  return new Promise<ImageDetails>(resolve => {
+    const image = new Image();
+    console.log("Created image", { image });
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      console.log("Image loaded");
+      ctx.drawImage(image, 0, 0);
+      const data = ctx.getImageData(0, 0, image.width, image.height).data;
+      console.log("Data made", { data });
+      resolve({
+        width: image.width,
+        height: image.height,
+        uInt8: data as any
+      });
+    };
+    image.src = base64;
+  });
+}
+
+export async function areImagesDifferent(
+  img1Base64: string,
+  img2Base64: string
+) {
+  return new Promise<boolean>(async (resolve, reject) => {
+    console.log("Determining if images are different", {
+      img1Base64,
+      img2Base64
+    });
+    if (img1Base64.length === 0 || img2Base64.length === 0) {
+      resolve(true);
+    }
+    const img1 = await getImageDetailsFromBase64(img1Base64);
+    const img2 = await getImageDetailsFromBase64(img2Base64);
+    const numberOfDiffPixels = pixelmatch(
+      img1.uInt8,
+      img2.uInt8,
+      null,
+      img1.width,
+      img2.height
+    );
+    const isDifferent = numberOfDiffPixels > 50;
+    if (isDifferent) {
+      resolve(true);
+    } else {
+      reject("Captured image is the same as the last one");
+    }
+  });
+}
+
 async function exchangeGitHubAccessTokenForAuthToken(
   accessCode: string
 ): Promise<string> {
-  return new Promise(async (resolve, reject) => {
+  return new Promise<string>(async (resolve, reject) => {
     console.log("Exchanging GitHub access token for authentication token", {
       accessCode
     });
@@ -195,7 +311,7 @@ async function exchangeGitHubAccessTokenForAuthToken(
       reject("No access_token provided by GitHub");
     }
     resolve(access_token);
-  }) as any;
+  });
 }
 
 function parseRedirectFragment(fragment): Record<string, string> {

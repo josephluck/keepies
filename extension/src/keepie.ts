@@ -1,5 +1,12 @@
 import { messageKeepieMade, messageRequestKeepie } from "./messages";
-import { getSettings, setSetting, syncKeepieWithGitHub } from "./api/sdk";
+import {
+  getSettings,
+  setSetting,
+  syncKeepieWithGitHub,
+  downloadKeepie,
+  captureVisibleTab,
+  areImagesDifferent
+} from "./api/sdk";
 import { Models } from "./api/models";
 import { Fixtures } from "./api/fixtures";
 
@@ -16,47 +23,55 @@ export function getCurrentTab(): Promise<chrome.tabs.Tab> {
 }
 
 export async function keepie() {
-  const settings = await getSettings();
+  const {
+    apps,
+    gitHubAuthenticationToken,
+    chosenGitHubSyncRepo,
+    lastCaptureDataUrl
+  } = await getSettings();
+
   const tab = await getCurrentTab();
-  const app = getAppFromUrl(settings, tab.url);
+  const app = getAppFromUrl(apps, tab.url);
+
   console.log("Starting keepie capture of", { app, tab });
+
   if (app) {
-    chrome.tabs.captureVisibleTab({ format: "png" }, url => {
-      if (url) {
-        const filename = `${generateFileName(tab)}.png`;
-        const base64Image = url.replace(/data:image\/png;base64,/, "");
-        chrome.downloads.download(
-          {
-            filename,
-            url
-          },
-          async () => {
-            await setSetting(
-              "apps",
-              settings.apps.map(a =>
-                a.origin === app.origin
-                  ? {
-                      ...a,
-                      lastKeepieOn: Date.now(),
-                      nextKeepieDue: Fixtures.nextKeepieDue()
-                    }
-                  : a
-              )
-            );
-            console.log("Keepie made, updating settings with new times", {
-              settings: await getSettings()
-            });
-            if (
-              settings.gitHubAuthenticationToken &&
-              settings.chosenGitHubSyncRepo
-            ) {
-              await syncKeepieWithGitHub(filename, base64Image, app.name);
-            }
-            chrome.runtime.sendMessage(messageKeepieMade());
-          }
-        );
+    const dataUrl = await captureVisibleTab();
+    const imageIsDifferentFromLastTime = await areImagesDifferent(
+      dataUrl,
+      lastCaptureDataUrl
+    );
+    if (imageIsDifferentFromLastTime) {
+      const filename = `${generateFileName(tab)}.png`;
+      const gitHubFileContents = dataUrl.replace(/data:image\/png;base64,/, "");
+      await downloadKeepie(filename, dataUrl);
+      if (gitHubAuthenticationToken && chosenGitHubSyncRepo) {
+        await syncKeepieWithGitHub(filename, gitHubFileContents, app.name);
       }
-    });
+      await setSetting("lastCaptureDataUrl", dataUrl);
+      await setSetting(
+        "apps",
+        apps.map(a => {
+          if (a.origin === app.origin) {
+            const updatedApp: Models.App = {
+              ...a,
+              numberOfKeepiesMade: a.numberOfKeepiesMade + 1,
+              lastKeepieOn: Date.now(),
+              nextKeepieDue: Fixtures.nextKeepieDue()
+            };
+            return updatedApp;
+          } else {
+            return a;
+          }
+        })
+      );
+      console.log("Keepie made, updating settings with new times", {
+        settings: await getSettings()
+      });
+      chrome.runtime.sendMessage(messageKeepieMade());
+    }
+  } else {
+    console.warn("App not found", { app });
   }
 }
 
@@ -99,8 +114,6 @@ function generateFileName(tab: chrome.tabs.Tab): string {
   );
 }
 
-function getAppFromUrl(settings: Models.Settings, url: string): Models.App {
-  return settings.apps.find(
-    app => url.includes(app.origin) || url === app.origin
-  );
+function getAppFromUrl(apps: Models.App[], url: string): Models.App {
+  return apps.find(app => url.includes(app.origin) || url === app.origin);
 }
