@@ -177,7 +177,7 @@ const component: Helix.Component<State, Actions> = (state, _, actions) => {
     <Extension>
       <GlobalStyles />
       <Heading state={state} actions={actions} />
-      <Collapse isOpened hasNestedCollapse>
+      <Collapse isOpened>
         {state.view === "apps" && state.settings ? (
           <Apps state={state} actions={actions} />
         ) : state.view === "settings" ? (
